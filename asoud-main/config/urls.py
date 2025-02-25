@@ -49,7 +49,6 @@ urlpatterns = [
     ),
     path(
         'api/v1/user/comment/',
-        # include('apps.comment.urls.user_urls'),
         include('apps.comment.urls'),
     ),
     path(
@@ -60,6 +59,10 @@ urlpatterns = [
         'api/v1/user/',
         include('apps.users.urls.user_urls'),
     ),
+    path(
+        'api/v1/discount/',
+        include('apps.discount.urls'),
+    )
 ]
 
 admin.site.site_header = _('Asoud Administration')

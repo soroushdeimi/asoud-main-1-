@@ -49,6 +49,7 @@ class CommentView(APIView):
 
 class CommentDetailView(APIView):
     permission_classes = [permissions.AllowAny]
+    
     def get(self, request, pk):
         try:
             comment = XtdComment.objects.get(pk=pk)
@@ -61,6 +62,7 @@ class CommentDetailView(APIView):
 
 class ContentCommentsView(APIView):
     permission_classes = [permissions.AllowAny]
+    
     def get(self, request, content_type, object_id):
         try:
             content_type_obj = ContentType.objects.get(model=content_type)

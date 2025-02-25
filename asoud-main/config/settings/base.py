@@ -51,6 +51,7 @@ INSTALLED_APPS = [
     'apps.product',
     'apps.region',
     'apps.users',
+    'apps.discount',
 
     'channels',
     'rest_framework',

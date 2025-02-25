@@ -4,7 +4,6 @@ from .models import (
     Product,
     ProductImage,
     ProductKeyword,
-    ProductDiscount,
     ProductTheme,
 )
 
@@ -65,25 +64,6 @@ class ProductKeywordAdmin(BaseAdmin):
 
 
 admin.site.register(ProductKeyword, ProductKeywordAdmin)
-
-
-class ProductDiscountAdmin(BaseAdmin):
-    list_display = [
-        'code',
-    ]
-
-    fields = (
-        'code',
-        'position',
-        'percentage',
-        'duration',
-        'users',
-    ) + BaseAdmin.fields
-
-    readonly_fields = BaseAdmin.readonly_fields
-
-
-admin.site.register(ProductDiscount, ProductDiscountAdmin)
 
 
 class ProductThemeAdmin(BaseAdmin):

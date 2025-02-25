@@ -34,3 +34,4 @@ class CommentSerializer(serializers.ModelSerializer):
         # Serialize child comments with reduced depth
         serializer = CommentSerializer(children, many=True, context={'depth': depth - 1})
         return serializer.data
+    

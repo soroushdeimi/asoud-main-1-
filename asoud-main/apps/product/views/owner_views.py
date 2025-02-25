@@ -72,6 +72,7 @@ class ProductCreateAPIView(views.APIView):
         except Exception as e:
             return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR) 
 
+
 class ProductListAPIView(views.APIView):
     def get(self, request, pk):
         product_market_theme_list = ProductTheme.objects.filter(
