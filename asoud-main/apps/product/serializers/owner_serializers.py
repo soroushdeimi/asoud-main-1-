@@ -9,6 +9,14 @@ from apps.product.models import (
 
 class ProductCreateSerializer(serializers.ModelSerializer):
     # TODO: keywords
+    market              = serializers.UUIDField()
+    description         = serializers.CharField(required=False)
+    technical_detail    = serializers.CharField(required=False)
+    required_product    = serializers.UUIDField(required=False)
+    gift_product        = serializers.UUIDField(required=False)
+    marketer_price      = serializers.DecimalField(required=False, max_digits=14, decimal_places=3)
+    ship_cost           = serializers.DecimalField(required=False, max_digits=10, decimal_places=3)
+    theme               = serializers.UUIDField(required=False)
 
     class Meta:
         model = Product
@@ -24,9 +32,12 @@ class ProductCreateSerializer(serializers.ModelSerializer):
             'gift_product',
             'is_marketer',
             'marketer_price',
+            'tag',
+            'tag_position',
             'sell_type',
             'ship_cost',
             'ship_cost_pay_type',
+            'theme'
         ]
 
 
@@ -38,10 +49,14 @@ class ProductListSerializer(serializers.ModelSerializer):
             'name',
             'description',
             'price',
+            'stock'
         ]
 
 
 class ProductDetailSerializer(serializers.ModelSerializer):
+    required_product = ProductListSerializer(read_only=True)
+    gift_product = ProductListSerializer(read_only=True)
+    
     class Meta:
         model = Product
         fields = [
@@ -52,9 +67,9 @@ class ProductDetailSerializer(serializers.ModelSerializer):
             # 'keywords' TODO: Handle manytomanyfield
             'stock',
             'price',
-            # 'required_product', TODO: Handle foreignkey
-            # 'gift_product', TODO: Handle foreignkey
-            'is_marketer'
+            'required_product',
+            'gift_product',
+            'is_marketer',
             'marketer_price',
             'tag',
             'tag_position',

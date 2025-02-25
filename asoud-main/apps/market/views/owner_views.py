@@ -88,6 +88,7 @@ class MarketUpdateAPIView(views.APIView):
             )
             return Response(success_response, status=status.HTTP_200_OK)
 
+class MarketGetAPIView(views.APIView):
     def get(self, request, pk, format=None):
         try:
             market = Market.objects.get(id=pk)
@@ -220,6 +221,7 @@ class MarketLocationUpdateAPIView(views.APIView):
             )
             return Response(success_response, status=status.HTTP_200_OK)
 
+class MarketLocationGetAPIView(views.APIView):
     def get(self, request, pk, format=None):
         try:
             market = Market.objects.get(id=pk)
@@ -267,7 +269,7 @@ class MarketContactCreateAPIView(views.APIView):
             data=request.data,
             context={'request': request},
         )
-
+        
         if serializer.is_valid(raise_exception=True):
             market_contact = serializer.save()
 
@@ -325,7 +327,7 @@ class MarketContactUpdateAPIView(views.APIView):
         serializer = MarketContactUpdaterSerializer(
             market_contact,
             data=request.data,
-            partial=False,
+            partial=True,
             context={'request': request},
         )
 
@@ -340,6 +342,7 @@ class MarketContactUpdateAPIView(views.APIView):
             )
             return Response(success_response, status=status.HTTP_200_OK)
 
+class MarketContactGetAPIView(views.APIView):
     def get(self, request, pk, format=None):
         try:
             market = Market.objects.get(id=pk)
@@ -708,10 +711,9 @@ class MarketSliderAPIView(views.APIView):
 
 
 class MarketThemeAPIView(views.APIView):
-    def post(self, request, pk):
-        market = Market.objects.get(id=pk)
-
+    def post(self, request, pk):    
         try:
+            market = Market.objects.get(id=pk)
             market_theme = MarketTheme.objects.get(market=market)
             serializer = MarketThemeCreateSerializer(
                 market_theme,
@@ -723,6 +725,15 @@ class MarketThemeAPIView(views.APIView):
             serializer = MarketThemeCreateSerializer(
                 data=request.data,
                 context={'request': request},
+            )
+        
+        except Market.DoesNotExist:
+            return Response(
+                ApiResponse(
+                    success=False,
+                    code=404,
+                    error="Market Not Found"
+                )
             )
 
         if serializer.is_valid(raise_exception=True):

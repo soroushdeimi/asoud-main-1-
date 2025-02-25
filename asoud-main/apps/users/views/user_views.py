@@ -11,8 +11,13 @@ from apps.users.models import User
 
 class PinCreateAPIView(views.APIView):
     permission_classes = (AllowAny,)
-
+    
     def post(self, request, format=None):
+        """
+        User Singup/Login
+        required fields: mobile_number(Unique)
+        return: 200: {}, 500: Error
+        """
         mobile_number = request.data.get("mobile_number")
 
         try:

@@ -11,12 +11,12 @@ urlpatterns = [
         name='country-list',
     ),
     path(
-        'province/list/<int:pk>/',
+        'province/list/<str:pk>/',
         ProvinceListAPIView.as_view(),
         name='province-list',
     ),
     path(
-        'city/list/<int:pk>/',
+        'city/list/<str:pk>/',
         CityListAPIView.as_view(),
         name='city-list',
     ),

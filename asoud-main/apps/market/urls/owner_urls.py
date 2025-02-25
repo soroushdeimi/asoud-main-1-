@@ -2,11 +2,14 @@ from django.urls import path
 
 from apps.market.views.owner_views import (
     MarketCreateAPIView,
+    MarketGetAPIView,
     MarketUpdateAPIView,
     MarketListAPIView,
     MarketLocationCreateAPIView,
+    MarketLocationGetAPIView,
     MarketLocationUpdateAPIView,
     MarketContactCreateAPIView,
+    MarketContactGetAPIView,
     MarketContactUpdateAPIView,
     MarketInactiveAPIView,
     MarketQueueAPIView,
@@ -19,13 +22,19 @@ from apps.market.views.owner_views import (
 app_name = 'market_owner'
 
 urlpatterns = [
+    # market itself
     path(
         'create/',
         MarketCreateAPIView.as_view(),
         name='create',
     ),
     path(
-        'update/<int:pk>/',
+        '<str:pk>/',
+        MarketGetAPIView.as_view(),
+        name='get',
+    ),
+    path(
+        'update/<str:pk>/',
         MarketUpdateAPIView.as_view(),
         name='update',
     ),
@@ -34,53 +43,71 @@ urlpatterns = [
         MarketListAPIView.as_view(),
         name='list',
     ),
+    
+    # market location
     path(
         'location/create/',
         MarketLocationCreateAPIView.as_view(),
         name='location-create',
     ),
     path(
-        'location/update/<int:pk>/',
+        'location/<str:pk>/',
+        MarketLocationGetAPIView.as_view(),
+        name='location-get',
+    ),
+    path(
+        'location/update/<str:pk>/',
         MarketLocationUpdateAPIView.as_view(),
         name='location-update',
     ),
+    
+    # market contact
     path(
         'contact/create/',
         MarketContactCreateAPIView.as_view(),
-        name='contact',
+        name='contact-create',
     ),
     path(
-        'contact/update/<int:pk>/',
+        'contact/<str:pk>/',
+        MarketContactGetAPIView.as_view(),
+        name='contact-get',
+    ),
+    path(
+        'contact/update/<str:pk>/',
         MarketContactUpdateAPIView.as_view(),
-        name='contact',
+        name='contact-update',
     ),
+
+    # market state
     path(
-        'inactive/<int:pk>/',
+        'inactive/<str:pk>/',
         MarketInactiveAPIView.as_view(),
         name='inactive',
     ),
     path(
-        'queue/<int:pk>/',
+        'queue/<str:pk>/',
         MarketQueueAPIView.as_view(),
         name='queue',
     ),
+
+    # market ui
     path(
-        'logo/<int:pk>/',
+        'logo/<str:pk>/',
         MarketLogoAPIView.as_view(),
         name='logo',
     ),
     path(
-        'background/<int:pk>/',
+        'background/<str:pk>/',
         MarketBackgroundAPIView.as_view(),
         name='background',
     ),
     path(
-        'slider/<int:pk>/',
+        'slider/<str:pk>/',
         MarketSliderAPIView.as_view(),
         name='slider',
     ),
     path(
-        'theme/<int:pk>/',
+        'theme/<str:pk>/',
         MarketThemeAPIView.as_view(),
         name='theme',
     ),

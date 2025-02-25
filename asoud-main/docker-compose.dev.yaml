@@ -8,7 +8,7 @@ services:
         environment:
             - DJANGO_SETTINGS_MODULE=config.settings.development
         volumes:
-            - ./:/asoud/
+            # - ./:/asoud/
             - static_volume:/asoud/static
             - media_volume:/asoud/media
         ports:
@@ -18,6 +18,11 @@ services:
         depends_on:
             - db
             - redis
+        develop:
+            watch:
+                - action: sync
+                  path: .
+                  target: /asoud/
 
     db:
         container_name: asoud_db

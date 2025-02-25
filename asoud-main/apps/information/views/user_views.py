@@ -9,10 +9,16 @@ from apps.information.serializers.user_serializers import TermListSerializer
 
 class TermListAPIView(views.APIView):
     def get(self, request, format=None):
-        term = Term.get_solo()
-
-        if term is None:
-            pass
+        try:
+            term = Term.get_solo()
+        except:
+            return Response(
+                ApiResponse(
+                    success=False,
+                    code=404,
+                    error="No Term Found"
+            )
+        )
 
         serializer = TermListSerializer(
             term,

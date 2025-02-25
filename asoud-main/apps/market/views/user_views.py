@@ -41,7 +41,17 @@ class MarketListAPIView(views.APIView):
 
 class MarketReportAPIView(views.APIView):
     def post(self, request, pk):
-        market = Market.objects.get(id=pk)
+        try:
+            market = Market.objects.get(id=pk)
+        except:
+            return Response(
+                ApiResponse(
+                    success=False,
+                    code=404,
+                    error="Market Not Found"
+                )
+            )
+        
         user = self.request.user
 
         serializer = MarketReportCreateSerializer(
@@ -81,8 +91,17 @@ class MarketReportAPIView(views.APIView):
 class MarketBookmarkAPIView(views.APIView):
     def post(self, request, pk):
         user = self.request.user
-        market = Market.objects.get(id=pk)
-
+        try:
+            market = Market.objects.get(id=pk)
+        except:
+            return Response(
+                ApiResponse(
+                    success=False,
+                    code=404,
+                    error="Market Not Found"
+                )
+            )
+        
         market_bookmark, is_created = MarketBookmark.objects.get_or_create(
             user=user,
             market=market,
@@ -103,7 +122,7 @@ class MarketBookmarkAPIView(views.APIView):
                 )
 
                 return Response(success_response, status=status.HTTP_201_CREATED)
-
+            
             market_bookmark.is_active = False
             market_bookmark.save()
 

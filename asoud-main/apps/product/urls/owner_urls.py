@@ -18,27 +18,27 @@ urlpatterns = [
         name='create',
     ),
     path(
-        'list/<int:pk>/',
+        'list/<str:pk>/',
         ProductListAPIView.as_view(),
         name='list',
     ),
     path(
-        'detail/<int:pk>/',
+        'detail/<str:pk>/',
         ProductDetailAPIView.as_view(),
         name='detail',
     ),
     path(
-        'theme/create/<int:pk>/',
+        'theme/create/<str:pk>/',
         ProductThemeCreateAPIView.as_view(),
         name='theme-create',
     ),
     path(
-        'theme/list/<int:pk>/',
+        'theme/list/<str:pk>/',
         ProductThemeListAPIView.as_view(),
         name='theme-list',
     ),
     path(
-        'theme/update/<int:pk>/',
+        'theme/update/<str:pk>/',
         ProductThemeUpdateAPIView.as_view(),
         name='theme-update',
     ),

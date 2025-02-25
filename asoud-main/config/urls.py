@@ -49,7 +49,8 @@ urlpatterns = [
     ),
     path(
         'api/v1/user/comment/',
-        include('apps.comment.urls.user_urls'),
+        # include('apps.comment.urls.user_urls'),
+        include('apps.comment.urls'),
     ),
     path(
         'api/v1/user/market/',

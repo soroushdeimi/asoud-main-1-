@@ -29,7 +29,17 @@ class GroupListAPIView(views.APIView):
 
 class CategoryListAPIView(views.APIView):
     def get(self, request, pk, format=None):
-        group_obj = Group.objects.get(id=pk)
+        try:
+            group_obj = Group.objects.get(id=pk)
+        except:
+            return Response(
+                ApiResponse(
+                    success=False,
+                    code=404,
+                    error="Group Not Found"
+                )
+            )
+        
         category_list = Category.objects.filter(group=group_obj)
 
         serializer = CategoryListSerializer(
@@ -50,7 +60,17 @@ class CategoryListAPIView(views.APIView):
 
 class SubCategoryListAPIView(views.APIView):
     def get(self, request, pk, format=None):
-        category_obj = Category.objects.get(id=pk)
+        try:
+            category_obj = Category.objects.get(id=pk)
+        except:
+            return Response(
+                ApiResponse(
+                    success=False,
+                    code=404,
+                    error="Category Not Found"
+                )
+            )
+        
         sub_category_list = SubCategory.objects.filter(category=category_obj)
 
         serializer = SubCategoryListSerializer(

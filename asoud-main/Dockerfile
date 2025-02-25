@@ -13,43 +13,21 @@ WORKDIR /asoud
 # jpeg-dev zlib-dev for Pillow
 # gettext for Django internationalization
 # postgresql-client for PostgreSQL
-RUN set -ex \
-    && apk add --no-cache \
+RUN set -ex && apk add --no-cache \
     python3-dev \
-    musl-dev \
     libffi-dev \
-    libxml2-dev \
-    libxslt-dev \
-    jpeg-dev \
     zlib-dev \
-    gettext \
-    postgresql-client \
-    git \
-    && apk add --no-cache --virtual \
-    .build-deps \
-    build-base \
-    postgresql-dev
+    gettext
 
+# copy requirements aGQoLJDZHx
 COPY ./requirements.txt /asoud/requirements.txt
 
 # Create python's env and install Django's dependencies
 RUN set -ex \
     # Upgrade pip, setuptools, and wheel
-    && pip install --no-cache-dir --upgrade pip setuptools wheel \
+    && pip install --no-cache-dir --upgrade pip \
     # Install Python dependencies
-    && pip install --no-cache-dir -r /asoud/requirements.txt \
-    # Extract runtime dependencies required by the installed packages
-    && runDeps="$(scanelf --needed --nobanner --recursive /usr/local \
-    | awk '{ gsub(/,/, "\nso:", $2); print "so:" $2 }' \
-    | sort -u \
-    | xargs -r apk info --installed \
-    | sort -u)" \
-    # Add runtime dependencies
-    && apk add --no-cache --virtual rundeps $runDeps \
-    # Remove build dependencies
-    && apk del .build-deps \
-    # Clean up caches to reduce image size
-    && rm -rf /root/.cache /tmp/*
+    && pip install --no-cache-dir -r /asoud/requirements.txt
 
 # TODO: Add a non-root user for better security
 # RUN addgroup -S appgroup && adduser -S appuser -G appgroup

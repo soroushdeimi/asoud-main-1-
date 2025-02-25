@@ -55,6 +55,11 @@ INSTALLED_APPS = [
     'channels',
     'rest_framework',
     'rest_framework.authtoken',
+
+    # comment system
+    'django.contrib.sites',
+    'django_comments_xtd',
+    'django_comments',
 ]
 
 # Custom Authentication User Model
@@ -228,3 +233,12 @@ CHANNEL_LAYERS = {
         },
     },
 }
+
+
+# comments 
+COMMENTS_APP = 'django_comments_xtd'
+SITE_ID = 2
+COMMENTS_XTD_MAX_THREAD_LEVEL = 1
+COMMENTS_XTD_CONFIRM_EMAIL = False
+COMMENTS_XTD_LIST_ORDER = ('-thread_id', 'order')
+

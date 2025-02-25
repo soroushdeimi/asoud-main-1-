@@ -22,24 +22,55 @@ class ProductCreateAPIView(views.APIView):
             data=request.data,
             context={'request': request},
         )
+        try:
+            if serializer.is_valid(raise_exception=True):
+                try:
+                    market_id = serializer.validated_data['market']
+                    market = Market.objects.get(id=market_id)
 
-        if serializer.is_valid(raise_exception=True):
-            product = serializer.save()
+                except Market.DoesNotExist:
+                    return Response(
+                        ApiResponse(
+                            success=False,
+                            code=404,
+                            error="Market Not Found"
+                        )
+                    )
 
-            product_id = product.id
+                required_product = Product.objects.filter(
+                    id=serializer.validated_data.get('required_product')
+                ).first()
+                
+                gift_product = Product.objects.filter(
+                    id=serializer.validated_data.get('gift_product')
+                ).first()
+                
+                theme = ProductTheme.objects.filter(
+                    id=serializer.validated_data.get('theme')
+                ).first()
 
-            success_response = ApiResponse(
-                success=True,
-                code=200,
-                data={
-                    'product': product_id,
-                    **serializer.data,
-                },
-                message='Product created successfully.',
-            )
+                product = serializer.save(
+                    market = market,
+                    required_product = required_product,
+                    gift_product = gift_product,
+                    theme = theme
+                )
 
-            return Response(success_response, status=status.HTTP_201_CREATED)
+                product_id = product.id
 
+                success_response = ApiResponse(
+                    success=True,
+                    code=200,
+                    data={
+                        'product': product_id,
+                        **serializer.data,
+                    },
+                    message='Product created successfully.',
+                )
+
+                return Response(success_response, status=status.HTTP_201_CREATED)
+        except Exception as e:
+            return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR) 
 
 class ProductListAPIView(views.APIView):
     def get(self, request, pk):
@@ -65,10 +96,17 @@ class ProductListAPIView(views.APIView):
 
 class ProductDetailAPIView(views.APIView):
     def get(self, request, pk):
-        product = Product.objects.get(
-            id=pk,
-        )
-
+        try:
+            product = Product.objects.get(id=pk)
+        except:
+            return Response(
+                ApiResponse(
+                    success=False,
+                    code=404,
+                    error="Product Not Found"
+                )
+            )
+        
         serializer = ProductDetailSerializer(
             product,
             context={"request": request},
@@ -86,8 +124,17 @@ class ProductDetailAPIView(views.APIView):
 
 class ProductThemeCreateAPIView(views.APIView):
     def post(self, request, pk):
-        market = Market.objects.get(id=pk)
-
+        try:
+            market = Market.objects.get(id=pk)
+        except:
+            return Response(
+                ApiResponse(
+                    success=False,
+                    code=404,
+                    error="Market Not Found"
+                )
+            )
+        
         serializer = ProductThemeCreateSerializer(
             data=request.data,
             context={'request': request},
@@ -112,8 +159,17 @@ class ProductThemeCreateAPIView(views.APIView):
 
 class ProductThemeListAPIView(views.APIView):
     def get(self, request, pk):
-        market = Market.objects.get(id=pk)
-
+        try:
+            market = Market.objects.get(id=pk)
+        except:
+            return Response(
+                ApiResponse(
+                    success=False,
+                    code=404,
+                    error="Market Not Found"
+                )
+            )
+    
         product_theme_list = ProductTheme.objects.filter(market=market)
 
         serializer = ProductThemeListSerializer(
@@ -134,7 +190,16 @@ class ProductThemeListAPIView(views.APIView):
 
 class ProductThemeUpdateAPIView(views.APIView):
     def put(self, request, pk):
-        product_theme = ProductTheme.objects.get(id=pk)
+        try:
+            product_theme = ProductTheme.objects.get(id=pk)
+        except:
+            return Response(
+                ApiResponse(
+                    success=False,
+                    code=404,
+                    error="Product Theme Not Found"
+                )
+            )
         products = request.data.get("products", [])
 
         if not isinstance(products, list):
@@ -149,11 +214,13 @@ class ProductThemeUpdateAPIView(views.APIView):
             return Response(response)
 
         for product_id in products:
-            product = Product.objects.get(id=product_id)
-
-            product.theme = product_theme
-            product.save()
-
+            try:
+                product = Product.objects.get(id=product_id)
+                product.theme = product_theme
+                product.save()
+            except:
+                pass
+            
         success_response = ApiResponse(
             success=True,
             code=200,

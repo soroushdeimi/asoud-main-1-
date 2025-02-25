@@ -7,10 +7,16 @@ from apps.users.models import User
 from apps.category.models import SubCategory
 from apps.region.models import City
 from apps.comment.models import Comment
-
+from apps.market.upload import (
+    upload_market_logo,
+    upload_market_background,
+    upload_market_userOnly,
+    upload_market_slider
+)
 # Create your models here.
 
 
+# old images are not removed, fix it later
 class Market(BaseModel):
     COMPANY = "company"
     SHOP = "shop"
@@ -109,14 +115,14 @@ class Market(BaseModel):
     )
 
     logo_img = models.ImageField(
-        upload_to='market/logo/',
+        upload_to=upload_market_logo,
         blank=True,
         null=True,
         verbose_name=_('Logo image'),
     )
 
     background_img = models.ImageField(
-        upload_to='market/background/',
+        upload_to=upload_market_background,
         blank=True,
         null=True,
         verbose_name=_('Background image'),
@@ -133,7 +139,7 @@ class Market(BaseModel):
     )
 
     user_only_img = models.ImageField(
-        upload_to='market/user-only/',
+        upload_to=upload_market_userOnly,
         blank=True,
         null=True,
         verbose_name=_('Image'),
@@ -224,14 +230,14 @@ class MarketContact(BaseModel):
     )
 
     email = models.CharField(
-        max_length=20,
+        max_length=64,
         blank=True,
         null=True,
         verbose_name=_('Email'),
     )
 
     website_url = models.CharField(
-        max_length=20,
+        max_length=64,
         blank=True,
         null=True,
         verbose_name=_('Website url'),
@@ -260,7 +266,7 @@ class MarketSlider(BaseModel):
     )
 
     image = models.ImageField(
-        upload_to='market/logo/',
+        upload_to=upload_market_slider,
         verbose_name=_('Image'),
     )
 

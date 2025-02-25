@@ -11,12 +11,12 @@ urlpatterns = [
         name='group-list',
     ),
     path(
-        'list/<int:pk>/',
+        'list/<str:pk>/',
         CategoryListAPIView.as_view(),
         name='category-list',
     ),
     path(
-        'sub/list/<int:pk>/',
+        'sub/list/<str:pk>/',
         SubCategoryListAPIView.as_view(),
         name='sub-category-list',
     ),

@@ -12,7 +12,7 @@ def custom_exception_handler(exc, context):
             code=response.status_code,
             error={
                 'code': error_code,
-                'detail': response.data['detail']
+                'detail': response.data.get('detail') 
             }
         )
 

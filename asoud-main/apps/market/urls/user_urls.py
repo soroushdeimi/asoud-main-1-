@@ -15,7 +15,7 @@ urlpatterns = [
         name='list',
     ),
     path(
-        'report/<int:pk>/',
+        'report/<str:pk>/',
         MarketReportAPIView.as_view(),
         name='report',
     ),
@@ -25,7 +25,7 @@ urlpatterns = [
         name='bookmark',
     ),
     path(
-        'bookmark/<int:pk>/',
+        'bookmark/<str:pk>/',
         MarketBookmarkAPIView.as_view(),
         name='bookmark',
     ),

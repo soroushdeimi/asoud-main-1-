@@ -29,7 +29,17 @@ class CountryListAPIView(views.APIView):
 
 class ProvinceListAPIView(views.APIView):
     def get(self, request, pk, format=None):
-        country_obj = Country.objects.get(id=pk)
+        try:
+            country_obj = Country.objects.get(id=pk)
+        except:
+            return Response(
+                ApiResponse(
+                    success=False,
+                    code=404,
+                    error="Country Not Found"
+                )
+            )
+        
         province_list = Province.objects.filter(country=country_obj)
 
         serializer = ProvinceListSerializer(
@@ -50,7 +60,17 @@ class ProvinceListAPIView(views.APIView):
 
 class CityListAPIView(views.APIView):
     def get(self, request, pk, format=None):
-        province_obj = Province.objects.get(id=pk)
+        try:
+            province_obj = Province.objects.get(id=pk)
+        except:
+            return Response(
+                ApiResponse(
+                    success=False,
+                    code=404,
+                    error="Province Not Found"
+                )
+            )
+        
         city_list = City.objects.filter(province=province_obj)
 
         serializer = CityListSerializer(
