@@ -62,7 +62,15 @@ urlpatterns = [
     path(
         'api/v1/discount/',
         include('apps.discount.urls'),
-    )
+    ),
+    path(
+        'api/v1/sms/admin/',
+        include('apps.sms.urls.admin'),
+    ),
+    path(
+        'api/v1/sms/owner/',
+        include('apps.sms.urls.owner'),
+    ),
 ]
 
 admin.site.site_header = _('Asoud Administration')

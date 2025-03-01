@@ -30,6 +30,11 @@ class User(AbstractUser):
         max_length=5,
         verbose_name=_('Pin'),
     )
+    pin_expiry = models.DateField(
+        null=True,
+        blank=True,
+        verbose_name=_('Pin expiry')
+    )
     type = models.CharField(
         max_length=10,
         choices=TYPE_CHOICES,

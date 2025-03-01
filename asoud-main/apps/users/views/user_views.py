@@ -1,12 +1,14 @@
-from rest_framework import views
+from rest_framework import views, status
 from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
 from rest_framework.status import HTTP_200_OK
 from rest_framework.authtoken.models import Token
-
 from utils.response import ApiResponse
-
 from apps.users.models import User
+from apps.users.sms_core import send_verification_code
+import random
+from django.utils import timezone
+from datetime import datetime, timedelta
 
 
 class PinCreateAPIView(views.APIView):
@@ -25,11 +27,16 @@ class PinCreateAPIView(views.APIView):
                 mobile_number=mobile_number,
             )
 
-            pin = 1111
+            # send verification pin by sms
+            pin = random.randrange(1111, 9999)
 
             user_obj.pin = pin
+            user_obj.pin_expiry = timezone.now() + timedelta(minutes=2)
             user_obj.save()
-
+            
+            print("--->   ", mobile_number, "   ", pin)
+            result = send_verification_code(mobile_number, pin)
+            print("result: ",result)
             data = {}
 
             success_response = ApiResponse(
@@ -76,6 +83,17 @@ class PinVerifyAPIView(views.APIView):
             return Response(response)
 
         try:
+            if user.pin_expiry < timezone.now():
+                response = ApiResponse(
+                    success=False,
+                    code=400,
+                    error={
+                        'code': "Code Expired",
+                        'detail': 'Code is only valid for 2 minutes',
+                    }
+                )
+                return Response(response, status=status.HTTP_400_BAD_REQUEST)
+
             if pin == user.pin:
                 token, _ = Token.objects.get_or_create(user=user)
 
