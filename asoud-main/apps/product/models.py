@@ -5,6 +5,7 @@ from apps.base.models import models, BaseModel
 from apps.users.models import User
 from apps.market.models import Market
 from apps.comment.models import Comment
+from apps.category.models import SubCategory
 
 # Create your models here.
 
@@ -123,6 +124,12 @@ class Product(BaseModel):
         verbose_name=_('Market'),
     )
 
+    type = models.CharField(
+        max_length=20,
+        choices=TYPE_CHOICES,
+        verbose_name=_('Type'),
+    )
+
     name = models.CharField(
         max_length=100,
         verbose_name=_('Name'),
@@ -140,6 +147,12 @@ class Product(BaseModel):
         verbose_name=_('Technical detail'),
     )
 
+    sub_category = models.ForeignKey(
+        SubCategory,
+        on_delete=models.CASCADE,
+        verbose_name=_('Category'),
+    )
+
     keywords = models.ManyToManyField(
         ProductKeyword,
         related_name='products',
@@ -152,10 +165,34 @@ class Product(BaseModel):
         verbose_name=_('Stock'),
     )
 
-    price = models.DecimalField(
+    main_price = models.DecimalField(
         max_digits=14,
         decimal_places=3,
-        verbose_name=_('Price'),
+        verbose_name=_('Main price'),
+    )
+
+    colleague_price = models.DecimalField(
+        max_digits=14,
+        decimal_places=3,
+        blank=True,
+        null=True,
+        verbose_name=_('Colleague price'),
+    )
+
+    marketer_price = models.DecimalField(
+        max_digits=14,
+        decimal_places=3,
+        blank=True,
+        null=True,
+        verbose_name=_('Marketer price'),
+    )
+
+    maximum_sell_price = models.DecimalField(
+        max_digits=14,
+        decimal_places=3,
+        blank=True,
+        null=True,
+        verbose_name=_('Maximum sell price'),
     )
 
     status = models.CharField(
@@ -189,12 +226,9 @@ class Product(BaseModel):
         verbose_name=_('Is marketer'),
     )
 
-    marketer_price = models.DecimalField(
-        max_digits=14,
-        decimal_places=3,
-        blank=True,
-        null=True,
-        verbose_name=_('Marketer price'),
+    is_requirement = models.BooleanField(
+        default=False,
+        verbose_name=_('Is requirement'),
     )
 
     tag = models.CharField(
@@ -274,3 +308,55 @@ class ProductImage(BaseModel):
 
     def __str__(self):
         return self.product.name
+
+
+class ProductDiscount(BaseModel):
+    TOP_LEFT = "top_left"
+    TOP_RIGHT = "top_right"
+    BOTTOM_LEFT = "bottom_left"
+    BOTTOM_RIGHT = "bottom_right"
+
+    POSITION_CHOICES = (
+        (TOP_LEFT, _("Top Left")),
+        (TOP_RIGHT, _("Top Right")),
+        (BOTTOM_LEFT, _("Bottom Left")),
+        (BOTTOM_RIGHT, _("Bottom Right")),
+    )
+
+    product = models.ForeignKey(
+        Product,
+        on_delete=models.CASCADE,
+        verbose_name=_('Product'),
+    )
+
+    users = models.ManyToManyField(
+        User,
+        related_name='discounts',
+        blank=True,
+        verbose_name=_('Users'),
+    )
+
+    position = models.CharField(
+        max_length=20,
+        choices=POSITION_CHOICES,
+        default=TOP_LEFT,
+        verbose_name=_("Position"),
+    )
+
+    percentage = models.PositiveSmallIntegerField(
+        verbose_name=_('Percentage'),
+    )
+
+    duration = models.PositiveSmallIntegerField(
+        blank=True,
+        null=True,
+        verbose_name=_('Duration'),
+    )
+
+    class Meta:
+        db_table = 'product_discount'
+        verbose_name = _('Product discount')
+        verbose_name_plural = _('Product discounts')
+
+    def __str__(self):
+        return self.code

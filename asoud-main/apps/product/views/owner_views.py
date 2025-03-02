@@ -6,6 +6,7 @@ from utils.response import ApiResponse
 
 from apps.product.serializers.owner_serializers import (
     ProductCreateSerializer,
+    ProductDiscountCreateSerializer,
     ProductDetailSerializer,
     ProductThemeListSerializer,
     ProductThemeCreateSerializer,
@@ -22,55 +23,49 @@ class ProductCreateAPIView(views.APIView):
             data=request.data,
             context={'request': request},
         )
-        try:
-            if serializer.is_valid(raise_exception=True):
-                try:
-                    market_id = serializer.validated_data['market']
-                    market = Market.objects.get(id=market_id)
 
-                except Market.DoesNotExist:
-                    return Response(
-                        ApiResponse(
-                            success=False,
-                            code=404,
-                            error="Market Not Found"
-                        )
-                    )
+        if serializer.is_valid(raise_exception=True):
+            product = serializer.save()
 
-                required_product = Product.objects.filter(
-                    id=serializer.validated_data.get('required_product')
-                ).first()
-                
-                gift_product = Product.objects.filter(
-                    id=serializer.validated_data.get('gift_product')
-                ).first()
-                
-                theme = ProductTheme.objects.filter(
-                    id=serializer.validated_data.get('theme')
-                ).first()
+            product_id = product.id
 
-                product = serializer.save(
-                    market = market,
-                    required_product = required_product,
-                    gift_product = gift_product,
-                    theme = theme
-                )
+            success_response = ApiResponse(
+                success=True,
+                code=200,
+                data={
+                    'product': product_id,
+                    **serializer.data,
+                },
+                message='Product created successfully.',
+            )
 
-                product_id = product.id
+            return Response(success_response, status=status.HTTP_201_CREATED)
 
-                success_response = ApiResponse(
-                    success=True,
-                    code=200,
-                    data={
-                        'product': product_id,
-                        **serializer.data,
-                    },
-                    message='Product created successfully.',
-                )
 
-                return Response(success_response, status=status.HTTP_201_CREATED)
-        except Exception as e:
-            return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR) 
+class ProductDiscountCreateAPIView(views.APIView):
+    def post(self, request, pk):
+        product = Product.objects.get(id=pk)
+
+        serializer = ProductDiscountCreateSerializer(
+            data=request.data,
+            context={'request': request},
+        )
+
+        if serializer.is_valid():
+            serializer.save(
+                product=product,
+            )
+
+            success_response = ApiResponse(
+                success=True,
+                code=200,
+                data={
+                    **serializer.data,
+                },
+                message='ProductDiscount created successfully.',
+            )
+
+            return Response(success_response, status=status.HTTP_201_CREATED)
 
 
 class ProductListAPIView(views.APIView):

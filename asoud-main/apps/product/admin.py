@@ -4,13 +4,14 @@ from .models import (
     Product,
     ProductImage,
     ProductKeyword,
+    ProductDiscount,
     ProductTheme,
 )
 
 # Register your models here.
 
 
-class ProductImage(BaseTabularInline):
+class ProductImageTabularInline(BaseTabularInline):
     model = ProductImage
 
     fields = (
@@ -20,24 +21,44 @@ class ProductImage(BaseTabularInline):
     readonly_fields = BaseTabularInline.readonly_fields
 
 
+class ProductDiscountTabularInline(BaseTabularInline):
+    model = ProductDiscount
+
+    fields = (
+        'position',
+        'percentage',
+        'duration',
+        'users',
+    )
+
+
 class ProductAdmin(BaseAdmin):
+    inlines = [
+        ProductImageTabularInline,
+        ProductDiscountTabularInline,
+    ]
+
     list_display = [
         'name'
     ]
 
     fields = (
         'market',
+        'type',
         'name',
         'description',
         'technical_detail',
+        'sub_category',
         'keywords',
         'stock',
-        'price',
+        'main_price',
+        'colleague_price',
+        'marketer_price',
+        'maximum_sell_price',
         'status',
         'required_product',
         'gift_product',
         'is_marketer',
-        'marketer_price',
         'tag',
         'tag_position',
         'sell_type',

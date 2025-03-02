@@ -1,44 +1,120 @@
 from rest_framework import serializers
 from django.urls import reverse
 
+from apps.users.models import User
 from apps.product.models import (
     Product,
+    ProductDiscount,
     ProductTheme,
+    ProductKeyword,
 )
 
 
+class KeywordField(serializers.RelatedField):
+
+    def to_representation(self, value):
+        return value.name
+
+    def to_internal_value(self, data):
+        keyword_obj, created = ProductKeyword.objects.get_or_create(name=data.strip())
+        return keyword_obj
+
+
+class UserField(serializers.RelatedField):
+    def to_representation(self, value):
+        return value.id
+
+    def to_internal_value(self, data):
+        try:
+            return User.objects.get(id=data)
+        except User.DoesNotExist:
+            raise serializers.ValidationError(f"User with ID {data} does not exist.")
+
+
 class ProductCreateSerializer(serializers.ModelSerializer):
-    # TODO: keywords
-    market              = serializers.UUIDField()
-    description         = serializers.CharField(required=False)
-    technical_detail    = serializers.CharField(required=False)
-    required_product    = serializers.UUIDField(required=False)
-    gift_product        = serializers.UUIDField(required=False)
-    marketer_price      = serializers.DecimalField(required=False, max_digits=14, decimal_places=3)
-    ship_cost           = serializers.DecimalField(required=False, max_digits=10, decimal_places=3)
-    theme               = serializers.UUIDField(required=False)
+    keywords = KeywordField(
+        many=True,
+        queryset=ProductKeyword.objects.all(),
+        required=False
+    )
+    type = serializers.ChoiceField(
+        choices=Product.TYPE_CHOICES,
+    )
+    tag = serializers.ChoiceField(
+        choices=Product.TAG_CHOICES,
+        default=Product.NONE,
+    )
+    tag_position = serializers.ChoiceField(
+        choices=Product.TAG_POSITION_CHOICES,
+        default=Product.TOP_LEFT,
+    )
+    sell_type = serializers.ChoiceField(
+        choices=Product.SELL_TYPE_CHOICES,
+        default=Product.ONLINE,
+    )
+    ship_cost_pay_type = serializers.ChoiceField(
+        choices=Product.SHIP_COST_PAY_TYPE_CHOICES,
+    )
+
 
     class Meta:
         model = Product
         fields = [
             'market',
+            'type',
             'name',
             'description',
             'technical_detail',
+            'sub_category',
+            'keywords',
             'stock',
-            'price',
-            'status',
+            'main_price',
+            'colleague_price',
+            'marketer_price',
+            'maximum_sell_price',
             'required_product',
             'gift_product',
             'is_marketer',
-            'marketer_price',
+            'is_requirement',
             'tag',
             'tag_position',
             'sell_type',
             'ship_cost',
             'ship_cost_pay_type',
-            'theme'
         ]
+
+    def create(self, validated_data):
+        keywords_data = validated_data.pop('keywords', [])
+        product = Product.objects.create(**validated_data)
+
+        product.keywords.set(keywords_data)
+        return product
+
+
+class ProductDiscountCreateSerializer(serializers.ModelSerializer):
+    users = UserField(
+        many=True,
+        queryset=User.objects.all(),
+        required=False
+    )
+    position = serializers.ChoiceField(choices=ProductDiscount.POSITION_CHOICES)
+
+    class Meta:
+        model = ProductDiscount
+        fields = [
+            'users',
+            'position',
+            'percentage',
+            'duration',
+        ]
+
+    def create(self, validated_data):
+        users_data = validated_data.pop('users', [])
+        discount = ProductDiscount.objects.create(**validated_data)
+
+        if users_data:
+            discount.users.set(users_data)
+        return discount
 
 
 class ProductListSerializer(serializers.ModelSerializer):
@@ -49,14 +125,10 @@ class ProductListSerializer(serializers.ModelSerializer):
             'name',
             'description',
             'price',
-            'stock'
         ]
 
 
 class ProductDetailSerializer(serializers.ModelSerializer):
-    required_product = ProductListSerializer(read_only=True)
-    gift_product = ProductListSerializer(read_only=True)
-    
     class Meta:
         model = Product
         fields = [
@@ -67,9 +139,9 @@ class ProductDetailSerializer(serializers.ModelSerializer):
             # 'keywords' TODO: Handle manytomanyfield
             'stock',
             'price',
-            'required_product',
-            'gift_product',
-            'is_marketer',
+            # 'required_product', TODO: Handle foreignkey
+            # 'gift_product', TODO: Handle foreignkey
+            'is_marketer'
             'marketer_price',
             'tag',
             'tag_position',
