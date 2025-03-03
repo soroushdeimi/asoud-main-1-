@@ -24,6 +24,10 @@ urlpatterns = [
         admin.site.urls,
     ),
     path(
+        '',
+        include('apps.index.urls'),
+    ),
+    path(
         'api/v1/category/',
         include('apps.category.urls.general_urls'),
     ),
@@ -59,10 +63,12 @@ urlpatterns = [
         'api/v1/user/',
         include('apps.users.urls.user_urls'),
     ),
+    # discount
     path(
         'api/v1/discount/',
         include('apps.discount.urls'),
     ),
+    # sms
     path(
         'api/v1/sms/admin/',
         include('apps.sms.urls.admin'),
@@ -71,6 +77,16 @@ urlpatterns = [
         'api/v1/sms/owner/',
         include('apps.sms.urls.owner'),
     ),
+    # reservation
+    path(
+        'api/v1/reservation/owner/',
+        include('apps.reserve.urls.owner'),
+    ),
+    path(
+        'api/v1/reservation/user/',
+        include('apps.reserve.urls.user'),
+    ), 
+
 ]
 
 admin.site.site_header = _('Asoud Administration')

@@ -53,6 +53,7 @@ INSTALLED_APPS = [
     'apps.users',
     'apps.discount',
     'apps.sms',
+    'apps.reserve',
 
     'channels',
     'rest_framework',
