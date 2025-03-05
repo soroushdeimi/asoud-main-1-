@@ -64,6 +64,16 @@ class InquiryAnswerCreateView(views.APIView):
         serializer = InquiryAnswerCreateSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         
+        if not request.user.is_owner():
+            return Response(
+                ApiResponse(
+                    success=False,
+                    code=403,
+                    error="Only Maket Owners can Answer Inquiries"
+                ),
+                status=status.HTTP_403_FORBIDDEN
+            )
+        
         try:
             inquiry = Inquiry.objects.get(id=serializer.validated_data['inquiry'])
         except Inquiry.DoesNotExist:

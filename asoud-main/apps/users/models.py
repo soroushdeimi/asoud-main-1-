@@ -30,7 +30,7 @@ class User(AbstractUser):
         max_length=5,
         verbose_name=_('Pin'),
     )
-    pin_expiry = models.DateField(
+    pin_expiry = models.DateTimeField(
         null=True,
         blank=True,
         verbose_name=_('Pin expiry')
