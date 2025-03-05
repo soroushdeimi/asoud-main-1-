@@ -54,6 +54,8 @@ class User(AbstractUser):
     def __str__(self):
         return self.mobile_number
 
+    def is_owner(self):
+        return self.markets.exists()
 
 class UserProfile(BaseModel):
     user = models.OneToOneField(

@@ -45,6 +45,7 @@ class Market(BaseModel):
     user = models.ForeignKey(
         User,
         on_delete=models.CASCADE,
+        related_name="markets",
         verbose_name=_('User'),
     )
 
