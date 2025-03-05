@@ -85,8 +85,16 @@ urlpatterns = [
     path(
         'api/v1/reservation/user/',
         include('apps.reserve.urls.user'),
-    ), 
-
+    ),
+    # price inquiry
+    path(
+        'api/v1/owner/inquiries/',
+        include('apps.price_inquiry.urls.owner'),
+    ),
+    path(
+        'api/v1/user/inquiries/',
+        include('apps.price_inquiry.urls.user'),
+    ),
 ]
 
 admin.site.site_header = _('Asoud Administration')

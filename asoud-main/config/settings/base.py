@@ -34,6 +34,10 @@ ALLOWED_HOSTS = []
 # Application definition
 
 INSTALLED_APPS = [
+    # asgi
+    'channels',
+    'daphne',
+
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -54,8 +58,9 @@ INSTALLED_APPS = [
     'apps.discount',
     'apps.sms',
     'apps.reserve',
-
-    'channels',
+    'apps.price_inquiry',
+    'apps.notification',
+  
     'rest_framework',
     'rest_framework.authtoken',
 
@@ -227,12 +232,12 @@ REDIS_HOST = os.environ.get('REDIS_HOST')
 REDIS_USERNAME = os.getenv("REDIS_USERNAME")
 REDIS_PASSWORD = os.environ.get('REDIS_PASSWORD')
 REDIS_PORT = os.environ.get('REDIS_PORT')
-
+ 
 CHANNEL_LAYERS = {
     "default": {
         "BACKEND": "channels_redis.core.RedisChannelLayer",
         "CONFIG": {
-            "hosts": [(f"redis://{REDIS_USERNAME}:{REDIS_PASSWORD}@{REDIS_HOST}:{REDIS_PORT}/0")],
+            "hosts": [(f"redis://:{REDIS_PASSWORD}@{REDIS_HOST}:{REDIS_PORT}/0")],
         },
     },
 }
