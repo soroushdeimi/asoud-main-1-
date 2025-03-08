@@ -60,9 +60,14 @@ INSTALLED_APPS = [
     'apps.reserve',
     'apps.price_inquiry',
     'apps.notification',
-  
+    'apps.flutter',
+    'apps.market_subdomain',
+
     'rest_framework',
     'rest_framework.authtoken',
+
+    # subdomains
+    'django_hosts',
 
     # comment system
     'django.contrib.sites',
@@ -74,6 +79,8 @@ INSTALLED_APPS = [
 AUTH_USER_MODEL = 'users.User'
 
 MIDDLEWARE = [
+    'config.hosts_middleware.HostsRequestMiddleware',
+    # 'django_hosts.middleware.HostsRequestMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -81,6 +88,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'django_hosts.middleware.HostsResponseMiddleware',
 ]
 
 ROOT_URLCONF = 'config.urls'
@@ -179,7 +187,7 @@ REST_FRAMEWORK = {
     'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
     'PAGE_SIZE': 10,
     'DATETIME_FORMAT': '%Y-%m-%d %H:%M:%S',
-    'EXCEPTION_HANDLER': 'utils.exception_handler.custom_exception_handler',
+    # 'EXCEPTION_HANDLER': 'utils.exception_handler.custom_exception_handler',
 }
 
 # Logging configuration
@@ -250,3 +258,6 @@ COMMENTS_XTD_MAX_THREAD_LEVEL = 1
 COMMENTS_XTD_CONFIRM_EMAIL = False
 COMMENTS_XTD_LIST_ORDER = ('-thread_id', 'order')
 
+
+ROOT_HOSTCONF = 'config.hosts'
+DEFAULT_HOST = 'main'

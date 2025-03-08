@@ -15,7 +15,7 @@ from apps.sms.serializers.owner import (
     PatternSmsCreateSerializer,
     PatternSmsviewSerializer
 )
-from apps.sms.sms_core import send_pattern
+from apps.sms.sms_core import SMSCoreHandler
 import json
 
 
@@ -146,7 +146,7 @@ class PatternSmsView(views.APIView):
         results = []
         for p in payload:
             print(p)
-            results.append(send_pattern(payload=p))
+            results.append(SMSCoreHandler.send_pattern(payload=p))
         
         print("results:     ", results)
         sms_list = []

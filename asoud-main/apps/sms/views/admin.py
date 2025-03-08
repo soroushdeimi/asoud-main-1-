@@ -8,7 +8,7 @@ from apps.sms.serializers.admin import (
     BulkSerializer,
     PatternSerializer
 )
-from apps.sms.sms_core import send_bulk
+from apps.sms.sms_core import SMSCoreHandler
 
 
 class LineCreateView(views.APIView):
@@ -301,7 +301,7 @@ class BulkSmsUpdateView(views.APIView):
             'sendDateTime': None
         }
         
-        result = send_bulk(payload=payload)
+        result = SMSCoreHandler.send_bulk(payload=payload)
         print('result : ', result)
 
 

@@ -29,6 +29,11 @@ urlpatterns = [
         name='create',
     ),
     path(
+        'list/',
+        MarketListAPIView.as_view(),
+        name='list',
+    ),
+    path(
         '<str:pk>/',
         MarketGetAPIView.as_view(),
         name='get',
@@ -37,11 +42,6 @@ urlpatterns = [
         'update/<str:pk>/',
         MarketUpdateAPIView.as_view(),
         name='update',
-    ),
-    path(
-        'list/',
-        MarketListAPIView.as_view(),
-        name='list',
     ),
     
     # market location

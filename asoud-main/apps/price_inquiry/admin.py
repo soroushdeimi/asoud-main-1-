@@ -5,20 +5,38 @@ from apps.price_inquiry.models import (
     InquiryAnswer
 )
 # Register your models here.
+class InquiryImageAdmin(admin.TabularInline):
+    model = InquiryImage
+    extra = 1
 
 class InquiryAdmin(admin.ModelAdmin):
-    pass
+    list_display = [
+        'name',
+        'type',
+        'amount',
+        'expiry'
+    ]
+    list_filter = [
+        'type',
+        'send'
+    ]
+    search_fields = [
+        'name',
+        'technical_detail',
+    ]
+    inlines = [InquiryImageAdmin]
 
 admin.site.register(Inquiry, InquiryAdmin)
 
 
-class InquiryImageAdmin(admin.ModelAdmin):
-    pass
-
-admin.site.register(InquiryImage, InquiryImageAdmin)
-
-
 class InquiryAnswerAdmin(admin.ModelAdmin):
-    pass
+    list_display = [
+        'inquiry',
+        'detail',
+        'total'
+    ]
+    search_fields = [
+        'detial'
+    ]
 
 admin.site.register(InquiryAnswer, InquiryAnswerAdmin)

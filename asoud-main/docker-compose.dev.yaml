@@ -4,8 +4,8 @@ services:
     web:
         container_name: asoud_api
         build: .
-        # command: python manage.py runserver 0.0.0.0:8000
-        command: daphne config.asgi:application --bind 0.0.0.0 --port 8000
+        command: python manage.py runserver 0.0.0.0:8000
+        # command: daphne config.asgi:application --bind 0.0.0.0 --port 8000
         environment:
             - DJANGO_SETTINGS_MODULE=config.settings.development
         volumes:

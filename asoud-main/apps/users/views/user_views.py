@@ -5,7 +5,7 @@ from rest_framework.status import HTTP_200_OK
 from rest_framework.authtoken.models import Token
 from utils.response import ApiResponse
 from apps.users.models import User
-from apps.users.sms_core import send_verification_code
+from apps.sms.sms_core import SMSCoreHandler
 import random
 from django.utils import timezone
 from datetime import datetime, timedelta
@@ -35,7 +35,7 @@ class PinCreateAPIView(views.APIView):
             user_obj.save()
             
             print("--->   ", mobile_number, "   ", pin)
-            result = send_verification_code(mobile_number, pin)
+            result = SMSCoreHandler.send_verification_code(mobile_number, pin)
             print("result: ",result)
             data = {}
 
