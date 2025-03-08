@@ -13,7 +13,7 @@ urlpatterns = [
         MarketDetailView.as_view()
     ),
     path(
-        '/product',
+        'products',
         ProductDetailView.as_view()
     ),
 ]
