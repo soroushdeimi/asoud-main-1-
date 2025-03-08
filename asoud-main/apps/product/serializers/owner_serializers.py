@@ -124,11 +124,14 @@ class ProductListSerializer(serializers.ModelSerializer):
             'id',
             'name',
             'description',
-            'price',
+            'main_price',
         ]
 
 
 class ProductDetailSerializer(serializers.ModelSerializer):
+    required_product = ProductListSerializer(read_only=True)
+    gift_product = ProductListSerializer(read_only=True)
+
     class Meta:
         model = Product
         fields = [
@@ -138,10 +141,10 @@ class ProductDetailSerializer(serializers.ModelSerializer):
             'technical_detail',
             # 'keywords' TODO: Handle manytomanyfield
             'stock',
-            'price',
-            # 'required_product', TODO: Handle foreignkey
-            # 'gift_product', TODO: Handle foreignkey
-            'is_marketer'
+            'main_price',
+            'required_product',
+            'gift_product',
+            'is_marketer',
             'marketer_price',
             'tag',
             'tag_position',
