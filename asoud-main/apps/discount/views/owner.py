@@ -7,6 +7,7 @@ from apps.discount.serializers.owner import (
     DiscountDetailSerializer,
     DiscountListSerializer
 )
+import string, random
 
 class DiscountCreateView(views.APIView):
     def post(self, request):
@@ -47,8 +48,12 @@ class DiscountCreateView(views.APIView):
                 status=status.HTTP_403_FORBIDDEN
             )
         
+        characters = string.ascii_letters + string.digits
+        code = ''.join(random.choice(characters) for _ in range(8))
+
         discount = serializer.save(
             content_object = content_object,
+            code=code,
             owner = request.user
         )
         

@@ -5,6 +5,7 @@ from django.contrib.contenttypes.models import ContentType
 
 class DiscountCreateSerializer(serializers.ModelSerializer):
     id = serializers.UUIDField(read_only=True)
+    code = serializers.CharField(read_only=True)
     content_type = serializers.SlugRelatedField(
         queryset=ContentType.objects.filter(
             model__in=['product', 'market']
