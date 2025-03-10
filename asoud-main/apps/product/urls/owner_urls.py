@@ -19,7 +19,7 @@ urlpatterns = [
         name='create',
     ),
     path(
-        'discount/create/<int:pk>/',
+        'discount/create/<str:pk>/',
         ProductDiscountCreateAPIView.as_view(),
         name='discount-create'
     ),
