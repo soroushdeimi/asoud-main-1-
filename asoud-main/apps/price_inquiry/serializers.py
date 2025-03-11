@@ -2,7 +2,8 @@ from rest_framework import serializers
 from apps.price_inquiry.models import (
     Inquiry,
     InquiryImage,
-    InquiryAnswer
+    InquiryAnswer,
+    InquiryAnswerImage
 )
 from apps.users.serializers import UserSerializer
 from jdatetime import datetime as jdatetime
@@ -10,6 +11,7 @@ from jdatetime import datetime as jdatetime
 
 class InquiryImageSerializer(serializers.ModelSerializer):
     id = serializers.UUIDField(read_only=True)
+
     class Meta:
         model = InquiryImage
         fields = [
@@ -17,6 +19,27 @@ class InquiryImageSerializer(serializers.ModelSerializer):
             'image'
         ]
 
+class InquiryImageListSerializer(serializers.Serializer):
+    images = serializers.ListField(child=serializers.ImageField())
+    
+    def create(self, validated_data):
+        # inquiry = self.context.get('inquiry')
+        inquiry = validated_data.pop('inquiry', None)
+
+        if not inquiry:
+            raise ValueError("Inquiry is required")
+        
+        images = []
+
+        for img in validated_data['images']:
+            image = InquiryImage.objects.create(
+                inquiry=inquiry,
+                image=img
+            )
+            images.append(image)
+        
+        return images
+    
 class InquirySerializer(serializers.ModelSerializer):
     id = serializers.UUIDField(read_only=True)
     user = UserSerializer()
@@ -94,11 +117,21 @@ class InquiryExpireSetSerializer(serializers.ModelSerializer):
             'expiry'
         ]
 
+class InquiryAnswerImageSerializer(serializers.ModelSerializer):
+    id = serializers.UUIDField(read_only=True)
+    class Meta:
+        model = InquiryAnswerImage
+        fields = [
+            'id',
+            'image'
+        ]
+
 class InquiryAnswerSerializer(serializers.ModelSerializer):
     id = serializers.UUIDField(read_only=True)
     inquiry = InquirySerializer(read_only=True)
     user = UserSerializer(read_only=True)
     fee = serializers.CharField(required=False)
+    images = InquiryAnswerImageSerializer(many=True)
 
     class Meta:
         model = InquiryAnswer
@@ -109,7 +142,28 @@ class InquiryAnswerSerializer(serializers.ModelSerializer):
             'detail',
             'total',
             'fee',
+            'images',
         ]
 
 class InquiryAnswerCreateSerializer(InquiryAnswerSerializer):
     inquiry = serializers.UUIDField()
+    images = serializers.ListField(child=serializers.ImageField())
+
+    def create(self, validated_data):
+        inquiry = validated_data.pop('inquiry')
+        user = validated_data.pop('user')
+        images = validated_data.pop('images')
+        
+        answer = InquiryAnswer.objects.create(
+            **validated_data,
+            inquiry=inquiry,
+            user=user
+        )
+
+        for image in images:
+            _ = InquiryAnswerImage.objects.create(
+                answer=answer,
+                image=image
+            )
+        
+        return answer

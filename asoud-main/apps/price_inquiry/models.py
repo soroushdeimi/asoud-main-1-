@@ -10,6 +10,11 @@ def upload_inquiry_image(instance, filename):
     extension = extension.lower()
     return f"img/inquiry/{uuid.uuid4()}{extension}"
 
+def upload_inquiry_answer_image(instance, filename):
+    _, extension = os.path.splitext(filename)
+    extension = extension.lower()
+    return f"img/inquiry_answer/{uuid.uuid4()}{extension}"
+
 class Inquiry(BaseModel):
     GOOD = 'good'
     SERVICE = 'serivce'
@@ -104,7 +109,7 @@ class InquiryImage(BaseModel):
         verbose_name_plural = _('Inquiry Images')
 
     def __str__(self):
-        return self.id[:4]
+        return str(self.id)[:4]
 
 class InquiryAnswer(BaseModel):
     inquiry = models.ForeignKey(
@@ -144,4 +149,23 @@ class InquiryAnswer(BaseModel):
         verbose_name_plural = _('Inquiry Answers')
 
     def __str__(self):
-        return self.id[:4]
+        return str(self.id)[:4]
+    
+class InquiryAnswerImage(BaseModel):
+    answer = models.ForeignKey(
+        InquiryAnswer,
+        related_name="images",
+        on_delete=models.CASCADE
+    )
+
+    image = models.ImageField(
+        upload_to=upload_inquiry_answer_image
+    )
+
+    class Meta:
+        db_table = "inquiry_answer_image"
+        verbose_name = _('Inquiry Answer Image')
+        verbose_name_plural = _('Inquiry Answer Images')
+
+    def __str__(self):
+        return str(self.id)[:4]

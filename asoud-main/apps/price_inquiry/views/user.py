@@ -12,7 +12,8 @@ from apps.price_inquiry.serializers import (
     InquiryImageSerializer,
     InquirySendSetSerializer,
     InquiryExpireSetSerializer,
-    InquiryAnswerSerializer
+    InquiryAnswerSerializer,
+    InquiryImageListSerializer,
 )
 from asgiref.sync import async_to_sync
 from channels.layers import get_channel_layer
@@ -96,9 +97,6 @@ class InquirySendSetView(views.APIView):
 
 class InquiryImageUploadView(views.APIView):
     def post(self, request, pk):
-        serializer = InquiryImageSerializer(data=request.data)
-        serializer.is_valid(raise_exception=True)
-
         try:
             inquiry = Inquiry.objects.get(id=pk)
         except Inquiry.DoesNotExist:
@@ -120,14 +118,18 @@ class InquiryImageUploadView(views.APIView):
                 ),
                 status=status.HTTP_403_FORBIDDEN
             )
-        
+
+        serializer = InquiryImageListSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
         serializer.save(inquiry=inquiry)
+
+        serialized_data = InquirySerializer(inquiry).data
 
         return Response(
             ApiResponse(
                 success=True,
                 code=200,
-                data=serializer.data
+                data=serialized_data
             )
         )
 
