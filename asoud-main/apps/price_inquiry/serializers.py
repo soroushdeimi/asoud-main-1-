@@ -152,7 +152,7 @@ class InquiryAnswerCreateSerializer(InquiryAnswerSerializer):
     def create(self, validated_data):
         inquiry = validated_data.pop('inquiry')
         user = validated_data.pop('user')
-        images = validated_data.pop('images')
+        images = validated_data.pop('images', None)
         
         answer = InquiryAnswer.objects.create(
             **validated_data,
