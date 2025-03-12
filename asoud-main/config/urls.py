@@ -18,6 +18,8 @@ from django.contrib import admin
 from django.urls import path, include
 from django.utils.translation import gettext_lazy as _
 
+from apps.flutter.views import VisitCardView
+
 urlpatterns = [
     path(
         'admin',
@@ -26,6 +28,10 @@ urlpatterns = [
     path(
         '',
         include('apps.index.urls'),
+    ),
+    path(
+        '<str:business_id>',
+        VisitCardView.as_view()
     ),
     path(
         'api/v1/category/',
