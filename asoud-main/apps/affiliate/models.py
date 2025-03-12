@@ -1,31 +1,12 @@
-from django.utils.translation import gettext_lazy as _
-from django.contrib.contenttypes.fields import GenericRelation
-
 from apps.base.models import models, BaseModel
-from apps.users.models import User
+from django.utils.translation import gettext_lazy as _
 from apps.market.models import Market
-from apps.comment.models import Comment
 from apps.category.models import SubCategory
+from apps.product.models import ProductKeyword, Product
 
 # Create your models here.
 
-
-class ProductKeyword(BaseModel):
-    name = models.CharField(
-        max_length=50,
-        unique=True,
-    )
-
-    class Meta:
-        db_table = 'product_keyword'
-        verbose_name = _('Product keyword')
-        verbose_name_plural = _('Product keywords')
-
-    def __str__(self):
-        return self.name
-
-
-class ProductTheme(BaseModel):
+class AffiliateProductTheme(BaseModel):
     market = models.ForeignKey(
         Market,
         on_delete=models.CASCADE,
@@ -41,23 +22,15 @@ class ProductTheme(BaseModel):
     )
 
     class Meta:
-        db_table = 'product_theme'
-        verbose_name = _('Product theme')
-        verbose_name_plural = _('Product themes')
+        db_table = 'affiliate_product_theme'
+        verbose_name = _('Affiliate Product theme')
+        verbose_name_plural = _('Affiliate Product themes')
 
     def __str__(self):
         return self.name
 
 
-class Product(BaseModel):
-    GOOD = "good"
-    SERVICE = "service"
-
-    TYPE_CHOICES = (
-        (GOOD, _("Good")),
-        (SERVICE, _("Service")),
-    )
-
+class AffiliateProduct(BaseModel):
     MARKET = "market"
     CUSTOMER = "customer"
     FREE = "free"
@@ -121,12 +94,19 @@ class Product(BaseModel):
     market = models.ForeignKey(
         Market,
         on_delete=models.CASCADE,
+        related_name='affiliate_products',
         verbose_name=_('Market'),
     )
 
+    product = models.ForeignKey(
+        Product,
+        related_name="affiliates",
+        on_delete=models.CASCADE,
+        verbose_name=_('Product')
+    )
+    
     type = models.CharField(
         max_length=20,
-        choices=TYPE_CHOICES,
         verbose_name=_('Type'),
     )
 
@@ -155,7 +135,7 @@ class Product(BaseModel):
 
     keywords = models.ManyToManyField(
         ProductKeyword,
-        related_name='products',
+        related_name='affiliate_products',
         blank=True,
         verbose_name=_('Keywords'),
     )
@@ -165,34 +145,10 @@ class Product(BaseModel):
         verbose_name=_('Stock'),
     )
 
-    main_price = models.DecimalField(
+    price = models.DecimalField(
         max_digits=14,
         decimal_places=3,
         verbose_name=_('Main price'),
-    )
-
-    colleague_price = models.DecimalField(
-        max_digits=14,
-        decimal_places=3,
-        blank=True,
-        null=True,
-        verbose_name=_('Colleague price'),
-    )
-
-    marketer_price = models.DecimalField(
-        max_digits=14,
-        decimal_places=3,
-        blank=True,
-        null=True,
-        verbose_name=_('Marketer price'),
-    )
-
-    maximum_sell_price = models.DecimalField(
-        max_digits=14,
-        decimal_places=3,
-        blank=True,
-        null=True,
-        verbose_name=_('Maximum sell price'),
     )
 
     status = models.CharField(
@@ -207,7 +163,7 @@ class Product(BaseModel):
         on_delete=models.SET_NULL,
         blank=True,
         null=True,
-        related_name='dependent_products',
+        related_name='dependent_affiliate_products',
         help_text="Another product that is required for this product.",
         verbose_name=_('Required product'),
     )
@@ -217,13 +173,8 @@ class Product(BaseModel):
         on_delete=models.SET_NULL,
         blank=True,
         null=True,
-        related_name='gift_products',
+        related_name='gift_affiliate_products',
         verbose_name=_('Gift product'),
-    )
-
-    is_marketer = models.BooleanField(
-        default=False,
-        verbose_name=_('Is marketer'),
     )
 
     is_requirement = models.BooleanField(
@@ -266,98 +217,42 @@ class Product(BaseModel):
         verbose_name=_('Ship cost pay type')
     )
 
-    comments = GenericRelation(
-        Comment,
-        related_query_name='market_comments',
-    )
-
     theme = models.ForeignKey(
-        ProductTheme,
+        AffiliateProductTheme,
         on_delete=models.CASCADE,
         blank=True,
         null=True,
-        related_name='products',
+        related_name='affiliate_products',
         verbose_name=_('Theme')
     )
 
     class Meta:
-        db_table = 'product'
-        verbose_name = _('Product')
-        verbose_name_plural = _('Products')
+        db_table = 'affiliate_product'
+        verbose_name = _('Affiliate Product')
+        verbose_name_plural = _('Affiliate Products')
 
     def __str__(self):
         return self.name
 
 
-class ProductImage(BaseModel):
+class AffiliateProductImage(BaseModel):
     product = models.ForeignKey(
-        Product,
+        AffiliateProduct,
         on_delete=models.CASCADE,
         related_name='images',
-        verbose_name=_('Product')
+        verbose_name=_('Affiliate Product')
     )
 
     image = models.ImageField(
-        upload_to='product/image/',
+        upload_to='product/affiliate/image/',
         verbose_name=_('Image'),
     )
 
     class Meta:
-        db_table = 'product_image'
-        verbose_name = _('Product image')
-        verbose_name_plural = _('Product images')
+        db_table = 'affiliate_product_image'
+        verbose_name = _('Affiliate Product image')
+        verbose_name_plural = _('Affiliate Product images')
 
     def __str__(self):
         return self.product.name
 
-
-class ProductDiscount(BaseModel):
-    TOP_LEFT = "top_left"
-    TOP_RIGHT = "top_right"
-    BOTTOM_LEFT = "bottom_left"
-    BOTTOM_RIGHT = "bottom_right"
-
-    POSITION_CHOICES = (
-        (TOP_LEFT, _("Top Left")),
-        (TOP_RIGHT, _("Top Right")),
-        (BOTTOM_LEFT, _("Bottom Left")),
-        (BOTTOM_RIGHT, _("Bottom Right")),
-    )
-
-    product = models.ForeignKey(
-        Product,
-        on_delete=models.CASCADE,
-        verbose_name=_('Product'),
-    )
-
-    users = models.ManyToManyField(
-        User,
-        related_name='discounts',
-        blank=True,
-        verbose_name=_('Users'),
-    )
-
-    position = models.CharField(
-        max_length=20,
-        choices=POSITION_CHOICES,
-        default=TOP_LEFT,
-        verbose_name=_("Position"),
-    )
-
-    percentage = models.PositiveSmallIntegerField(
-        verbose_name=_('Percentage'),
-    )
-
-    duration = models.PositiveSmallIntegerField(
-        blank=True,
-        null=True,
-        verbose_name=_('Duration'),
-    )
-
-    class Meta:
-        db_table = 'product_discount'
-        verbose_name = _('Product discount')
-        verbose_name_plural = _('Product discounts')
-
-    def __str__(self):
-        return self.code

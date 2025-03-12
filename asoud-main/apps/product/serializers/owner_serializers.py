@@ -7,6 +7,7 @@ from apps.product.models import (
     ProductDiscount,
     ProductTheme,
     ProductKeyword,
+    ProductImage,
 )
 
 
@@ -29,6 +30,17 @@ class UserField(serializers.RelatedField):
             return User.objects.get(id=data)
         except User.DoesNotExist:
             raise serializers.ValidationError(f"User with ID {data} does not exist.")
+
+
+class ProductImageSerializer(serializers.ModelSerializer):
+    id = serializers.UUIDField(read_only=True)
+
+    class Meta:
+        model = ProductImage
+        fields = [
+            'id',
+            'image'
+        ]
 
 
 class ProductCreateSerializer(serializers.ModelSerializer):
@@ -76,6 +88,7 @@ class ProductCreateSerializer(serializers.ModelSerializer):
             'gift_product',
             'is_marketer',
             'is_requirement',
+            'status',
             'tag',
             'tag_position',
             'sell_type',
@@ -84,10 +97,21 @@ class ProductCreateSerializer(serializers.ModelSerializer):
         ]
 
     def create(self, validated_data):
+        # remove images 
+        images = validated_data.pop('images', None)
+
         keywords_data = validated_data.pop('keywords', [])
         product = Product.objects.create(**validated_data)
 
         product.keywords.set(keywords_data)
+        
+        if images:
+            for image in images:
+                _ = ProductImage.objects.create(
+                    product=product,
+                    image=image
+                )
+
         return product
 
 
@@ -118,6 +142,7 @@ class ProductDiscountCreateSerializer(serializers.ModelSerializer):
 
 
 class ProductListSerializer(serializers.ModelSerializer):
+    images = ProductImageSerializer(many=True)
     class Meta:
         model = Product
         fields = [
@@ -125,6 +150,7 @@ class ProductListSerializer(serializers.ModelSerializer):
             'name',
             'description',
             'main_price',
+            'images',
         ]
 
 

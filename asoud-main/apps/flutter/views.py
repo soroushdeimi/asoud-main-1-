@@ -1,10 +1,17 @@
 from rest_framework import views, status, permissions
 from rest_framework.response import Response
 from utils.response import ApiResponse
+
 from apps.market.models import Market
-from apps.market.serializers.user_serializers import MarketListSerializer
+from apps.market.serializers.user_serializers import (
+    MarketListSerializer,
+    MarketDetailSerializer
+)
 from apps.product.models import Product
 from apps.product.serializers.owner_serializers import ProductDetailSerializer
+from apps.advertise.models import Advertisement
+from apps.advertise.serializers import AdvertiseSerializer
+
 # Create your views here.
 
 
@@ -88,4 +95,62 @@ class AdvertizeDetailView(views.APIView):
     permission_classes = [permissions.AllowAny]
 
     def get(self, request):
-        pass
+        ad_id = request.GET.get('id')
+        if not ad_id:
+            return Response(
+                ApiResponse(
+                    success=False,
+                    code=400,
+                    error="Advertisement Id Not Provided"
+                ),
+                status=status.HTTP_400_BAD_REQUEST
+            )
+        
+        try:
+            ad = Advertisement.objects.get(id=ad_id)
+        except Advertisement.DoesNotExist:
+            return Response(
+                ApiResponse(
+                    success=False,
+                    code=404,
+                    error="Advertisement Not Found"
+                ),
+                status=status.HTTP_404_NOT_FOUND
+            )
+        
+        serializer = AdvertiseSerializer(ad)
+
+        return Response(
+            ApiResponse(
+                success=True,
+                code=200,
+                data=serializer.data
+            )
+        )
+
+
+class VisitCardView(views.APIView):
+    permission_classes = [permissions.AllowAny]
+
+    def get(self, request, business_id):
+        try:
+            market = Market.objects.get(business_id=business_id)
+
+            serializer = MarketDetailSerializer(market)
+
+            return Response(
+                ApiResponse(
+                    success=True,
+                    code=200,
+                    data=serializer.data
+                )
+            )
+        
+        except Exception as e:
+            return Response(
+                ApiResponse(
+                    success=False,
+                    code=500,
+                    error=str(e)
+                )
+            )

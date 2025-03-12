@@ -12,9 +12,16 @@ from apps.product.serializers.owner_serializers import (
     ProductThemeCreateSerializer,
     ProductThemeListSerializer,
 )
-
 from apps.product.models import Product, ProductTheme
 from apps.market.models import Market
+from apps.advertise.core  import AdvertisementCore
+
+# affiliate products
+from apps.affiliate.models import (
+    AffiliateProduct, 
+    AffiliateProductTheme
+)
+from apps.affiliate.serializers.user import AffiliateProductThemeListSerializer
 
 
 class ProductCreateAPIView(views.APIView):
@@ -28,6 +35,9 @@ class ProductCreateAPIView(views.APIView):
             product = serializer.save()
 
             product_id = product.id
+
+            if product.is_requirement:
+                ad_data = AdvertisementCore.create_advertisement_for_product(product)
 
             success_response = ApiResponse(
                 success=True,
@@ -80,10 +90,20 @@ class ProductListAPIView(views.APIView):
             context={"request": request},
         )
 
+        affiliate_product_theme_list = AffiliateProductTheme.objects.filter(
+            market=pk
+        ).prefetch_related('affiliate_products')
+        
+        aff_serializer = AffiliateProductThemeListSerializer(
+            affiliate_product_theme_list,
+            many=True,
+            context={"request": request},
+        )
+
         success_response = ApiResponse(
             success=True,
             code=200,
-            data=serializer.data,
+            data=serializer.data + aff_serializer.data,
             message='Data retrieved successfully'
         )
 

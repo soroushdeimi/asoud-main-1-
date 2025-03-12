@@ -5,6 +5,8 @@ import jdatetime
 from apps.market.models import (
     Market,
     MarketReport,
+    MarketContact,
+    MarketLocation
 )
 
 
@@ -51,3 +53,33 @@ class MarketReportCreateSerializer(serializers.ModelSerializer):
         fields = [
             'description',
         ]
+
+class LocationSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = MarketLocation
+        fields = [
+            'city',
+            'address',
+            'zip_code',
+            'latitude',
+            'longitude',
+        ]
+
+class ContactSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = MarketContact
+        fields = [
+            'first_mobile_number',
+            'second_mobile_number',
+            'telephone',
+            'email',
+            'messenger_ids',
+        ]
+
+class MarketDetailSerializer(serializers.ModelSerializer):
+    location = LocationSerializer()
+    contact = ContactSerializer()
+    
+    class Meta:
+        model = Market
+        fields = '__all__'

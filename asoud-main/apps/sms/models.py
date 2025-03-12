@@ -95,7 +95,7 @@ class BaseSmsModel(BaseModel):
     )
 
     def  __str__(self):
-        return f'sms {self.id[:4]}'
+        return f'sms {str(self.id)[:4]}'
     
 class BulkSms(BaseSmsModel):
     PENDING = 'pending'

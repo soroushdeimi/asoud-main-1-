@@ -160,6 +160,7 @@ class MarketLocation(BaseModel):
     market = models.OneToOneField(
         Market,
         on_delete=models.CASCADE,
+        related_name='location',
         verbose_name=_('Market'),
     )
 
@@ -201,6 +202,7 @@ class MarketContact(BaseModel):
     market = models.OneToOneField(
         Market,
         on_delete=models.CASCADE,
+        related_name='contact',
         verbose_name=_('Market'),
     )
 
@@ -263,6 +265,7 @@ class MarketSlider(BaseModel):
     market = models.ForeignKey(
         Market,
         on_delete=models.CASCADE,
+        related_name='slider',
         verbose_name=_('Market')
     )
 

@@ -62,6 +62,8 @@ INSTALLED_APPS = [
     'apps.notification',
     'apps.flutter',
     'apps.market_subdomain',
+    'apps.advertise',
+    'apps.affiliate',
 
     'rest_framework',
     'rest_framework.authtoken',

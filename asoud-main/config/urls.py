@@ -95,8 +95,30 @@ urlpatterns = [
         'api/v1/user/inquiries/',
         include('apps.price_inquiry.urls.user'),
     ),
+    path(
+        'api/v1/advertisements/',
+        include('apps.advertise.urls.user'),
+    ),
+    path(
+        'api/v1/owner/affiliate/',
+        include('apps.affiliate.urls.owner'),
+    ),
+    path(
+        'api/v1/user/affiliate/',
+        include('apps.affiliate.urls.user'),
+    ),
 ]
 
 admin.site.site_header = _('Asoud Administration')
 admin.site.index_title = _('Welcome to Asoud Admin')
 admin.site.site_title = _('Asoud Admin')
+
+
+from django.conf import settings
+from django.conf.urls.static import static
+
+if settings.DEBUG:
+    urlpatterns += static(settings.MEDIA_URL,
+        document_root=settings.MEDIA_ROOT)
+    urlpatterns += static(settings.STATIC_URL,
+        document_root=settings.STATIC_ROOT)
