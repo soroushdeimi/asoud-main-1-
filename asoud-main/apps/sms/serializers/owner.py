@@ -31,7 +31,7 @@ class BulkSmsCreateSerializer(serializers.ModelSerializer):
     
     class Meta:
         model = BulkSms
-        excludes = ['user', 'message_ids']
+        exclude = ['user', 'message_ids']
 
 class BulkSmsViewSerializer(serializers.ModelSerializer):
     id = serializers.UUIDField(read_only=True)
