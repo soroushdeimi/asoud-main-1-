@@ -8,6 +8,6 @@ class WalletAdmin(BaseAdmin):
     fields = (
         'user',
         'balance'
-    ) + + BaseAdmin.fields
+    ) + BaseAdmin.fields
 
 admin.site.register(Wallet, WalletAdmin)

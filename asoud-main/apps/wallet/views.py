@@ -1,19 +1,96 @@
 from rest_framework import views, status, permissions
 from rest_framework.response import Response
 from utils.response import ApiResponse
-from apps.wallet.models import Wallet
+from apps.wallet.models import Wallet, Transaction
+from apps.wallet.serializer import (
+    WalletCheckSerializer,
+    TransactionSerializer
+)
 # Create your views here.
 
-class WalletCheckView(views.APIView):
+
+class WalletBalanceView(views.APIView):
     def get(self, request):
         try:
-            wallet = Wallet.objects.get(user=request.user)
-        except Wallet.DoesNotExist:
+            wallet, _ = Wallet.objects.get_or_create(user=request.user)
+            
+            return Response(
+                ApiResponse(
+                    success=True,
+                    code=200,
+                    data={'balance': wallet.balance}
+                )
+            )
+        
+        except Exception as e:
             return Response(
                 ApiResponse(
                     success=False,
-                    code=404,
-                    error="Wallet Not Found",
+                    code=500,
+                    error=str(e),
                 ), 
-                status=status.HTTP_404_NOT_FOUND
+                status=status.HTTP_500_INTERNAL_SERVER_ERROR
             )
+        
+class WalletCheckView(views.APIView):
+    def post(self, request):
+        try:
+            wallet, _ = Wallet.objects.get_or_create(user=request.user)
+            
+            serializer = WalletCheckSerializer(data=request.data)
+            serializer.is_valid(raise_exception=True)
+
+            amount = serializer.validated_data['amount']
+            
+            if wallet.balance >= float(amount):
+                return Response(
+                    ApiResponse(
+                        success=True,
+                        code=200,
+                        message="Sufficient Balance"
+                    )
+                )
+            
+            else :
+                return Response(
+                    ApiResponse(
+                        success=False,
+                        code=200,
+                        message="Insufficient Balance"
+                    )
+                )
+            
+        except Exception as e:
+            return Response(
+                ApiResponse(
+                    success=False,
+                    code=500,
+                    error=str(e),
+                ), 
+                status=status.HTTP_500_INTERNAL_SERVER_ERROR
+            )
+
+class TransactionListView(views.APIView):
+    def get(self, request):
+        try:
+            transactions = Transaction.objects.filter(user=request.user)
+            
+            serializer = TransactionSerializer(transactions, many=True)
+            return Response(
+                ApiResponse(
+                    success=True,
+                    code=200,
+                    data=serializer.data
+                )
+            )
+
+        except Exception as e:
+            return Response(
+                ApiResponse(
+                    success=True,
+                    code=500,
+                    error=str(e)
+                ),
+                status=status.HTTP_500_INTERNAL_SERVER_ERROR
+            )
+
