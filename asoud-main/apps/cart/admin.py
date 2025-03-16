@@ -1,16 +1,20 @@
 from apps.base.admin import admin, BaseAdmin, BaseTabularInline
 
-from apps.cart.models import Cart, CartItem, CartPayment
+from apps.cart.models import (
+    Order,
+    OrderItem
+)
 
 # Register your models here.
 
 
-class CartItemTabularInlune(BaseTabularInline):
-    model = CartItem
+class OrderItemTabularInlune(BaseTabularInline):
+    model = OrderItem
     extra = 0
 
     fields = (
         'product',
+        'affiliate',
         'quantity',
         'total_price',
     ) + BaseTabularInline.fields
@@ -24,16 +28,17 @@ class CartItemTabularInlune(BaseTabularInline):
     total_price.short_description = 'Total price'
 
 
-class CartAdmin(BaseAdmin):
+class OrderAdmin(BaseAdmin):
     inlines = [
-        CartItemTabularInlune,
+        OrderItemTabularInlune,
     ]
 
     list_display = [
         'user',
         'total_price',
         'total_items',
-        'description',
+        'type',
+        'status',
     ]
 
     fields = (
@@ -41,6 +46,8 @@ class CartAdmin(BaseAdmin):
         'total_price',
         'total_items',
         'description',
+        'type',
+        'status'
     ) + BaseAdmin.fields
 
     readonly_fields = (
@@ -57,25 +64,5 @@ class CartAdmin(BaseAdmin):
     total_items.short_description = 'Total items'
 
 
-admin.site.register(Cart, CartAdmin)
+admin.site.register(Order, OrderAdmin)
 
-
-class CartPaymentAdmin(BaseAdmin):
-    list_display = [
-        'cart',
-        'type',
-        'status',
-        'amount',
-    ]
-
-    fields = (
-        'cart',
-        'type',
-        'status',
-        'amount',
-    ) + BaseAdmin.fields
-
-    readonly_fields = BaseAdmin.readonly_fields
-
-
-admin.site.register(CartPayment, CartPaymentAdmin)

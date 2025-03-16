@@ -101,10 +101,12 @@ urlpatterns = [
         'api/v1/user/inquiries/',
         include('apps.price_inquiry.urls.user'),
     ),
+    # advertisement
     path(
         'api/v1/advertisements/',
         include('apps.advertise.urls.user'),
     ),
+    # affiliate
     path(
         'api/v1/owner/affiliate/',
         include('apps.affiliate.urls.owner'),
@@ -113,17 +115,29 @@ urlpatterns = [
         'api/v1/user/affiliate/',
         include('apps.affiliate.urls.user'),
     ),
+    # wallet
     path(
         'api/v1/wallet/',
         include('apps.wallet.urls'),
     ),
+    # referral
     path(
         'api/v1/user/referral/',
         include('apps.referral.urls.user'),
     ),
+    # payments
     path(
         'api/v1/user/payments/',
         include('apps.payment.urls.user'),
+    ),
+    # orders
+    path(
+        'api/v1/user/order/',
+        include('apps.cart.urls.user'),
+    ),
+    path(
+        'api/v1/owner/order/',
+        include('apps.cart.urls.owner'),
     ),
 ]
 

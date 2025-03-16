@@ -7,7 +7,7 @@ from apps.payment.models import Payment, Zarinpal
 from apps.advertise.models import Advertisement
 from apps.wallet.models import Wallet
 from apps.wallet.core import WalletCore
-from apps.cart.models import Cart
+from apps.cart.models import Order
 
 class PaymentCore:
     def pay(self, user, data):
@@ -19,8 +19,8 @@ class PaymentCore:
                 model = Advertisement
             case "wallet":
                 model = Wallet
-            case "cart":
-                model = Cart
+            case "order":
+                model = Order
 
             case _:
                 return False, "Incorrect taget Value"
@@ -55,7 +55,7 @@ class PaymentCore:
             'amount': int(payment.amount),
             'currency': 'IRT',
             'description': 'text',
-            'callback_url': 'https://google.com', #asoud.ir/user/payments/verify/zarinpal,
+            'callback_url': ["http://asoud.ir/api/v1/user/payments/verify/",'https://google.com'][0], 
             'meta_data': {'payment': str(payment.id)}
         }
 
@@ -203,6 +203,9 @@ class PostPaymentCore:
         if not success:
             raise Exception(data)
 
-    def complete_order(self, id):
-        pass
+    def complete_order(self, pk:str):
+        order = Order.objects.get(id=pk)
+        order.status = Order.COMPLETED
+        order.is_paid = True
+        order.save()
 

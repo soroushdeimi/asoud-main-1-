@@ -86,12 +86,11 @@ class InquiryAnswerCreateView(views.APIView):
                 status=status.HTTP_404_NOT_FOUND
             )
 
-        print("-----  before saveing serilizer  ------")
         obj = serializer.save(
             inquiry=inquiry,
             user=request.user
         )
-        print("-----  error after saveing serilizer  ------")
+
         # send notification to user
         channel_layer = get_channel_layer()
         async_to_sync(channel_layer.group_send)(
