@@ -35,8 +35,8 @@ class PinCreateAPIView(views.APIView):
             user_obj.save()
             
             print("--->   ", mobile_number, "   ", pin)
-            result = SMSCoreHandler.send_verification_code(mobile_number, pin)
-            print("result: ",result)
+            # result = SMSCoreHandler.send_verification_code(mobile_number, pin)
+            # print("result: ",result)
             data = {}
 
             success_response = ApiResponse(

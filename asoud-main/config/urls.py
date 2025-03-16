@@ -113,6 +113,18 @@ urlpatterns = [
         'api/v1/user/affiliate/',
         include('apps.affiliate.urls.user'),
     ),
+    path(
+        'api/v1/wallet/',
+        include('apps.wallet.urls'),
+    ),
+    path(
+        'api/v1/user/referral/',
+        include('apps.referral.urls.user'),
+    ),
+    path(
+        'api/v1/user/payments/',
+        include('apps.payment.urls.user'),
+    ),
 ]
 
 admin.site.site_header = _('Asoud Administration')

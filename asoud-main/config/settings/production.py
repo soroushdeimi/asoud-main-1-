@@ -6,6 +6,7 @@
 
 import os
 from .base import *
+import uuid
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = False
@@ -29,3 +30,7 @@ SECRET_KEY = os.environ.get('DJANGO_SECRET_KEY')
 # SECURE_HSTS_INCLUDE_SUBDOMAINS = True
 # SECURE_HSTS_PRELOAD = True
 # SECURE_CONTENT_TYPE_NOSNIFF = True
+
+
+# currently it is on sandbox for both dev and prod
+ZARINPAL_URL = "sandbox" 

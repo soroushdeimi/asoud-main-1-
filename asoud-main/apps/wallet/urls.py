@@ -2,7 +2,8 @@ from django.urls import path
 from apps.wallet.views import (
     WalletBalanceView,
     WalletCheckView,
-    TransactionListView
+    TransactionListView,
+    WalletPayView
 )
 
 app_name = "wallet"
@@ -18,6 +19,11 @@ urlpatterns = [
         'balance/check/', 
         WalletCheckView.as_view(), 
         name="check"
+    ),
+    path(
+        'pay/', 
+        WalletPayView.as_view(), 
+        name="pay-with-wallet"
     ),
     path(
         'transactions/', 

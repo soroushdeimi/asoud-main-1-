@@ -27,6 +27,9 @@ class AdvertisementCore:
     def create_advertisement_for_product(product):
         
         data = model_to_dict(product)
+        
+        # allow advertisements from product to publish
+        data['is_paid'] = True
 
         serializer = AdvertiseCreateSerializer(data=data)
         serializer.is_valid(raise_exception=True)

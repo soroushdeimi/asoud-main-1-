@@ -3,7 +3,7 @@ from apps.wallet.models import Wallet, Transaction
 
 
 class WalletCheckSerializer(serializers.Serializer):
-    amount = serializers.CharField()
+    amount = serializers.FloatField()
 
 class WalletSerializer(serializers.ModelSerializer):
     id = serializers.UUIDField(read_only=True)
@@ -13,6 +13,12 @@ class WalletSerializer(serializers.ModelSerializer):
             'id',
             'balance',
         ]
+
+class WalletPaySerializer(serializers.Serializer):
+    amount = serializers.FloatField()
+    target_id = serializers.CharField()
+    target_content = serializers.CharField()
+
 
 class TransactionSerializer(serializers.ModelSerializer):
     id = serializers.UUIDField(read_only=True)

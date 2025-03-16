@@ -5,6 +5,7 @@
 # -----------------------------------------------------------------------------
 
 from .base import *
+import uuid
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
@@ -16,3 +17,7 @@ ALLOWED_HOSTS = [
     'aasoud.ir',
     '.aasoud.ir',
 ]
+
+
+ZARINPAL_URL = "sandbox"
+

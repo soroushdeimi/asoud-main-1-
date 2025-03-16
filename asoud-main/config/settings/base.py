@@ -64,6 +64,9 @@ INSTALLED_APPS = [
     'apps.market_subdomain',
     'apps.advertise',
     'apps.affiliate',
+    'apps.referral',
+    'apps.wallet',
+    'apps.payment',
 
     'rest_framework',
     'rest_framework.authtoken',

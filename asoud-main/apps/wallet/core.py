@@ -1,10 +1,12 @@
-from apps.wallet.models import Wallet
+from apps.wallet.models import Wallet, Transaction
 from django.db import transaction
+from apps.users.models import User
+
 
 class WalletCore:
 
     @staticmethod
-    def increase_balance(pk:str, amount:float):
+    def increase_balance(user:User, pk:str, amount:float):
         if amount <= 0:
             return False, "Invalid amount"
         
@@ -15,13 +17,21 @@ class WalletCore:
 
         with transaction.atomic():
             wallet.balance += amount
-
             wallet.save()
-        
+            
+            print('error not in increate wallet')
+            trans = Transaction.objects.create(
+                user = user,
+                from_wallet = wallet,
+                to_wallet = wallet,
+                action = 'charge', 
+                amount = amount
+            )
+
         return True, wallet.balance
     
     @staticmethod
-    def decrease_balance(pk:str, amount:float):
+    def decrease_balance(user:User, pk:str, amount:float):
         if amount <= 0:
             return False, "Invalid amount"
         
@@ -35,13 +45,20 @@ class WalletCore:
         
         with transaction.atomic():
             wallet.balance -= amount
-
             wallet.save()
+            
+            trans = Transaction.objects.create(
+                user = user,
+                from_wallet = wallet,
+                to_wallet = wallet,
+                action = 'spend', 
+                amount = amount
+            )
         
         return True, wallet.balance
     
     @staticmethod
-    def transaction(from_pk:str, to_pk:str, amount: float):
+    def transaction(user:User, from_pk:str, to_pk:str, amount: float):
         if amount <= 0:
             return False, "Invalid amount"
         
@@ -60,6 +77,14 @@ class WalletCore:
 
             from_wallet.save()
             to_wallet.save()
+
+            trans = Transaction.objects.create(
+                user = user,
+                from_wallet = from_wallet,
+                to_wallet = to_wallet,
+                action = 'exchange', 
+                amount = amount
+            )
         
         return True, (from_wallet.balance, to_wallet.balance)
 

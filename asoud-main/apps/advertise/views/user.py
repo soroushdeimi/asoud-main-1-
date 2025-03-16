@@ -40,7 +40,7 @@ class AdvertiseCreateView(views.APIView):
         
 class AdvertiseListView(views.APIView):
     def get(self, request):
-        advertises = Advertisement.objects.all()
+        advertises = Advertisement.objects.filter(is_paid=True)
 
         if q := request.GET.get('q'):
             advertises = advertises.filter(name_icontain=q)

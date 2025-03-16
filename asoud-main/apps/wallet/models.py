@@ -16,9 +16,13 @@ class Wallet(BaseModel):
         verbose_name=_('Balance')
     )
 
-
+    class Meta:
+        ordering = ['-created_at']
+        verbose_name = _('Wallet')
+        verbose_name_plural = _('Wallets')
+    
 class Transaction(BaseModel):
-    user = models.OneToOneField(
+    user = models.ForeignKey(
         User,
         related_name='wallet_transactions',
         on_delete=models.CASCADE,
@@ -47,3 +51,8 @@ class Transaction(BaseModel):
         decimal_places=3,
         verbose_name=_('Amount')
     )
+
+    class Meta:
+        ordering = ['-created_at']
+        verbose_name = _('Wallet Transaction')
+        verbose_name_plural = _('Wallet Transactions')
