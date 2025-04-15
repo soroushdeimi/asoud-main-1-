@@ -13,6 +13,7 @@ DEBUG = False
 # TODO: Update this to match your domain(s)
 ALLOWED_HOSTS = [
     '37.32.11.190',
+    'asoud.ir',
 ]
 
 # Use a more secure secret key in production
