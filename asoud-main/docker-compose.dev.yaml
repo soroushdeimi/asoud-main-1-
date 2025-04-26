@@ -1,5 +1,3 @@
-version: '3.9'
-
 services:
     web:
         container_name: asoud_api
@@ -52,7 +50,7 @@ services:
                 'password123',
             ]
         environment:
-            - REDIS_PASSWORD = ${REDIS_PASSWORD}
+            - REDIS_PASSWORD=${REDIS_PASSWORD}
 
     nginx:
         container_name: asoud_nginx

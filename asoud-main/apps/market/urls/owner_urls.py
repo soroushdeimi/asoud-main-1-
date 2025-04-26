@@ -19,6 +19,13 @@ from apps.market.views.owner_views import (
     MarketThemeAPIView,
 )
 
+from apps.market.views.market_schedule import (
+    MarketScheduleAPIView,
+    MarketScheduleListView,
+    MarketScheduleUpdateView,
+    MarketScheduleDeleteView
+)
+
 app_name = 'market_owner'
 
 urlpatterns = [
@@ -110,5 +117,27 @@ urlpatterns = [
         'theme/<str:pk>/',
         MarketThemeAPIView.as_view(),
         name='theme',
+    ),
+
+    # schedule
+    path(
+        'schedules/create/',
+        MarketScheduleAPIView.as_view(),
+        name='schedule-create',
+    ),
+    path(
+        'schedules/list/',
+        MarketScheduleListView.as_view(),
+        name='schedule-list',
+    ),
+    path(
+        'schedules/<str:pk>/update/',
+        MarketScheduleUpdateView.as_view(),
+        name='schedule-update',
+    ),
+    path(
+        'schedules/<str:pk>/delete/',
+        MarketScheduleDeleteView.as_view(),
+        name='schedule-delete',
     ),
 ]

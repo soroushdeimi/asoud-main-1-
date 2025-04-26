@@ -48,6 +48,7 @@ class SpecialistCreateSerializer(SpecialistSerializer):
 class ReserveTimeSerializer(serializers.ModelSerializer):
     id = serializers.UUIDField(read_only=True)
     service = ServiceSerializer()
+    end = serializers.TimeField(required=False)
 
     class Meta:
         model = ReserveTime
@@ -55,7 +56,8 @@ class ReserveTimeSerializer(serializers.ModelSerializer):
             'id',
             'service',
             'day',
-            'start'
+            'start',
+            'end'
         ]
 
 class ReserveTimeCreateSerializer(ReserveTimeSerializer):

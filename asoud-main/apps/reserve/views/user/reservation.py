@@ -59,11 +59,9 @@ class ReservationDetailView(views.APIView):
 
 class ReservationCreateView(views.APIView):
     def post(self, request):
-        print("reserving ..............")
         serializer = ReservationCreateSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
 
-        print("reserving .............. 1")
         try:
             reserve = ReserveTime.objects.get(id=serializer.validated_data['reserve'])
         except ReserveTime.DoesNotExist:
@@ -82,7 +80,6 @@ class ReservationCreateView(views.APIView):
         )
 
         serialized_data = ReservationSerializer(obj).data
-        print("reserving ..............  2")
 
         return Response(
             ApiResponse(

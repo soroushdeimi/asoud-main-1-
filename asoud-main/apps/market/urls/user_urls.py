@@ -5,6 +5,7 @@ from apps.market.views.user_views import (
     MarketReportAPIView,
     MarketBookmarkAPIView,
 )
+from apps.market.views.market_schedule import MarketScheduleUserListView
 
 app_name = 'market_user'
 
@@ -28,5 +29,11 @@ urlpatterns = [
         'bookmark/<str:pk>/',
         MarketBookmarkAPIView.as_view(),
         name='bookmark',
+    ),
+
+    path(
+        'schedule/<str:pk>/',
+        MarketScheduleUserListView.as_view(),
+        name='schedule-list',
     ),
 ]

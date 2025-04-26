@@ -13,6 +13,7 @@ class Service(BaseModel):
         on_delete=models.CASCADE,
         verbose_name=_('Market')
     )
+    
     name = models.CharField(
         max_length=32,
         verbose_name=_('name')
@@ -87,6 +88,12 @@ class ReserveTime(BaseModel):
 
     start = models.TimeField(
         verbose_name=_('StartTime')
+    )
+
+    end = models.TimeField(
+        null=True,
+        blank=True,
+        verbose_name=_('EndTime')
     )
 
     class Meta:

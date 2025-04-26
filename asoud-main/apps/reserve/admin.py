@@ -38,6 +38,7 @@ class ReserveTimeAdmin(admin.ModelAdmin):
         'service',
         'day',
         'start',
+        'end',
     ]
     search_fields = [
         'day',
