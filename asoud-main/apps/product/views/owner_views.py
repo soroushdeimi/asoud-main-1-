@@ -8,6 +8,7 @@ from apps.product.serializers.owner_serializers import (
     ProductCreateSerializer,
     ProductDiscountCreateSerializer,
     ProductDetailSerializer,
+    ProductListSerializer,
     ProductThemeListSerializer,
     ProductThemeCreateSerializer,
     ProductThemeListSerializer,
@@ -21,8 +22,10 @@ from apps.affiliate.models import (
     AffiliateProduct, 
     AffiliateProductTheme
 )
-from apps.affiliate.serializers.user import AffiliateProductThemeListSerializer
-
+from apps.affiliate.serializers.user import (
+    AffiliateProductThemeListSerializer,
+    AffiliateProductListSerializer
+)
 
 class ProductCreateAPIView(views.APIView):
     def post(self, request):
@@ -80,32 +83,43 @@ class ProductDiscountCreateAPIView(views.APIView):
 
 class ProductListAPIView(views.APIView):
     def get(self, request, pk):
-        product_market_theme_list = ProductTheme.objects.filter(
-            market_id=pk
-        ).prefetch_related('products')
-
-        serializer = ProductThemeListSerializer(
-            product_market_theme_list,
-            many=True,
-            context={"request": request},
-        )
-
-        affiliate_product_theme_list = AffiliateProductTheme.objects.filter(
+        product_list = Product.objects.filter(
             market=pk
-        ).prefetch_related('affiliate_products')
-        
-        aff_serializer = AffiliateProductThemeListSerializer(
-            affiliate_product_theme_list,
+        )
+
+        serializer = ProductListSerializer(
+            product_list,
             many=True,
             context={"request": request},
         )
 
-        success_response = ApiResponse(
-            success=True,
-            code=200,
-            data=serializer.data + aff_serializer.data,
-            message='Data retrieved successfully'
-        )
+        with_affiliate = request.GET.get('affiliate')
+
+        if with_affiliate:
+            affiliate_product_list = AffiliateProduct.objects.filter(
+                market=pk
+            )
+            
+            aff_serializer = AffiliateProductListSerializer(
+                affiliate_product_list,
+                many=True,
+                context={"request": request},
+            )
+
+            success_response = ApiResponse(
+                success=True,
+                code=200,
+                data=serializer.data + aff_serializer.data,
+                message='Data retrieved successfully'
+            )
+            
+        else:
+            success_response = ApiResponse(
+                success=True,
+                code=200,
+                data=serializer.data,
+                message='Data retrieved successfully'
+            )
 
         return Response(success_response)
 

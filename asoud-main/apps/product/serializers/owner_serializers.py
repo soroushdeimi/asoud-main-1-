@@ -150,6 +150,7 @@ class ProductListSerializer(serializers.ModelSerializer):
             'name',
             'description',
             'main_price',
+            'stock',
             'images',
         ]
 
@@ -180,7 +181,6 @@ class ProductDetailSerializer(serializers.ModelSerializer):
             # 'comments', TODO: Handle GenericRelation
             # TODO: Handle ProductImage, ProductDiscount
         ]
-
 
 class ProductThemeListSerializer(serializers.ModelSerializer):
     products = serializers.SerializerMethodField()
