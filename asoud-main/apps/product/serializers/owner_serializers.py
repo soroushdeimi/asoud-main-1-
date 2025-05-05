@@ -11,22 +11,6 @@ from apps.product.models import (
 )
 
 
-class KeywordField(serializers.RelatedField):
-    def get_queryset(self):
-        return ProductKeyword.objects.all()
-
-    def to_representation(self, value):
-        # Handles both ManyRelatedManager (when many=True) and single instances
-        if hasattr(value, 'all'):  # For ManyToMany manager
-            return [item.name for item in value.all()]
-        return value.name  # For single instance
-
-    def to_internal_value(self, data):
-        if isinstance(data, str):
-            keyword, _ = ProductKeyword.objects.get_or_create(name=data.strip())
-            return keyword
-        return data  # Handles case where data is already a ProductKeyword instance
-
 class UserField(serializers.RelatedField):
     def to_representation(self, value):
         return value.id
@@ -50,10 +34,10 @@ class ProductImageSerializer(serializers.ModelSerializer):
 
 
 class ProductCreateSerializer(serializers.ModelSerializer):
-    keywords = KeywordField(
-        many=True,
+    keywords = serializers.ListField(
+        child=serializers.CharField(),
         required=False,
-        queryset=ProductKeyword.objects.all(),
+        write_only=True  # If you only need this for input
     )
     type = serializers.ChoiceField(
         choices=Product.TYPE_CHOICES,
@@ -113,7 +97,9 @@ class ProductCreateSerializer(serializers.ModelSerializer):
         keywords_data = validated_data.pop('keywords', [])
         product = Product.objects.create(**validated_data)
 
-        product.keywords.set(keywords_data)
+        for keyword_name in keywords_data:
+            keyword, _ = ProductKeyword.objects.get_or_create(name=keyword_name.strip())
+            product.keywords.add(keyword)
         
         if images:
             for image in images:
@@ -124,6 +110,10 @@ class ProductCreateSerializer(serializers.ModelSerializer):
 
         return product
 
+    def to_representation(self, instance):
+        representation = super().to_representation(instance)
+        representation['keywords'] = [k.name for k in instance.keywords.all()]
+        return representation
 
 class ProductDiscountCreateSerializer(serializers.ModelSerializer):
     users = UserField(
