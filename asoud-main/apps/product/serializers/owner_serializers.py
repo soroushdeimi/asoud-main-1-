@@ -12,14 +12,17 @@ from apps.product.models import (
 
 
 class KeywordField(serializers.RelatedField):
+    def get_queryset(self):
+        return ProductKeyword.objects.all()
 
     def to_representation(self, value):
-        return value.name
+        return value.name if value else None
 
     def to_internal_value(self, data):
-        keyword_obj, created = ProductKeyword.objects.get_or_create(name=data.strip())
-        return keyword_obj
-
+        if isinstance(data, str):
+            keyword_obj, created = ProductKeyword.objects.get_or_create(name=data.strip())
+            return keyword_obj
+        return data
 
 class UserField(serializers.RelatedField):
     def to_representation(self, value):
