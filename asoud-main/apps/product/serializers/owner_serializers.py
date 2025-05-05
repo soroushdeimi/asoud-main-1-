@@ -16,6 +16,8 @@ class KeywordField(serializers.RelatedField):
         return ProductKeyword.objects.all()
 
     def to_representation(self, value):
+        if hasattr(value, 'all'):  # Handle RelatedManager
+            return [v.name for v in value.all()]
         return value.name if value else None
 
     def to_internal_value(self, data):
