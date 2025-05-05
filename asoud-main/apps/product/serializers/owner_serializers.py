@@ -16,15 +16,16 @@ class KeywordField(serializers.RelatedField):
         return ProductKeyword.objects.all()
 
     def to_representation(self, value):
-        if hasattr(value, 'all'):  # Handle RelatedManager
-            return [v.name for v in value.all()]
-        return value.name if value else None
+        # Handles both ManyRelatedManager (when many=True) and single instances
+        if hasattr(value, 'all'):  # For ManyToMany manager
+            return [item.name for item in value.all()]
+        return value.name  # For single instance
 
     def to_internal_value(self, data):
         if isinstance(data, str):
-            keyword_obj, created = ProductKeyword.objects.get_or_create(name=data.strip())
-            return keyword_obj
-        return data
+            keyword, _ = ProductKeyword.objects.get_or_create(name=data.strip())
+            return keyword
+        return data  # Handles case where data is already a ProductKeyword instance
 
 class UserField(serializers.RelatedField):
     def to_representation(self, value):
@@ -51,9 +52,8 @@ class ProductImageSerializer(serializers.ModelSerializer):
 class ProductCreateSerializer(serializers.ModelSerializer):
     keywords = KeywordField(
         many=True,
-        queryset=ProductKeyword.objects.all(),
         required=False,
-        write_only=True
+        queryset=ProductKeyword.objects.all(),
     )
     type = serializers.ChoiceField(
         choices=Product.TYPE_CHOICES,
