@@ -22,7 +22,7 @@ from apps.flutter.views import VisitCardView
 
 urlpatterns = [
     path(
-        'admin',
+        'admin/',
         admin.site.urls,
     ),
     path(
