@@ -41,14 +41,13 @@ class ProductCreateAPIView(views.APIView):
             if product.is_requirement:
                 ad_data = AdvertisementCore.create_advertisement_for_product(product)
 
-            response_data = ProductCreateSerializer(product, context={'request': request}).data
 
             success_response = ApiResponse(
                 success=True,
                 code=200,
                 data={
                     'product': product_id,
-                    **response_data,
+                    **serializer.data,
                 },
                 message='Product created successfully.',
             )

@@ -10,7 +10,18 @@ from apps.product.models import (
     ProductImage,
 )
 
+class KeywordsField(serializers.ListField):
+    child = serializers.CharField()
 
+    def to_representation(self, value):
+        # 'value' is the RelatedManager (e.g., product.keywords)
+        # Return list of keyword names
+        return [keyword.name for keyword in value.all()]
+
+    def to_internal_value(self, data):
+        # Validate input as list of strings as usual
+        return super().to_internal_value(data)
+    
 class UserField(serializers.RelatedField):
     def to_representation(self, value):
         return value.id
@@ -34,10 +45,8 @@ class ProductImageSerializer(serializers.ModelSerializer):
 
 
 class ProductCreateSerializer(serializers.ModelSerializer):
-    keywords = serializers.ListField(
-        child=serializers.CharField(),
+    keywords = KeywordsField(
         required=False,
-        write_only=True  # If you only need this for input
     )
     type = serializers.ChoiceField(
         choices=Product.TYPE_CHOICES,
@@ -109,17 +118,6 @@ class ProductCreateSerializer(serializers.ModelSerializer):
 
         return product
 
-    def to_representation(self, instance):
-        representation = super().to_representation(instance)
-        
-        representation['keywords'] = [k.name for k in instance.keywords.all()]
-        
-        representation['images'] = [
-            {'id': img.id, 'url': img.image.url} 
-            for img in instance.images.all()  # Using the related_name
-        ]
-
-        return representation
 
 class ProductDiscountCreateSerializer(serializers.ModelSerializer):
     users = UserField(
