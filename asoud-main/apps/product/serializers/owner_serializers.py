@@ -67,7 +67,10 @@ class ProductCreateSerializer(serializers.ModelSerializer):
     ship_cost_pay_type = serializers.ChoiceField(
         choices=Product.SHIP_COST_PAY_TYPE_CHOICES,
     )
-
+    images = serializers.ListField(
+        child=serializers.ImageField(), 
+        required=False
+    )
 
     class Meta:
         model = Product
@@ -94,6 +97,7 @@ class ProductCreateSerializer(serializers.ModelSerializer):
             'sell_type',
             'ship_cost',
             'ship_cost_pay_type',
+            'images',
         ]
 
     def create(self, validated_data):
