@@ -230,31 +230,51 @@ class ProductThemeUpdateAPIView(views.APIView):
                     error="Product Theme Not Found"
                 )
             )
-        products = request.data.get("products", [])
+        product = request.data.get("product")
+        index = request.data.get("index")
 
-        if not isinstance(products, list):
+        if not product or not index:
             response = ApiResponse(
                 success=False,
                 code=400,
                 error={
                     'code': 'bad_request',
-                    'detail': 'Invalid format. "products" should be a list.',
+                    'detail': 'Invalid format. "both product and index must be provided"',
                 }
             )
             return Response(response)
 
-        for product_id in products:
-            try:
-                product = Product.objects.get(id=product_id)
-                product.theme = product_theme
-                product.save()
-            except:
-                pass
+        try:
+            product = Product.objects.get(id=product)
+            product.theme = product_theme
+            product.theme_index = index
+            product.save()
+        except:
+            pass
             
         success_response = ApiResponse(
             success=True,
             code=200,
             data={},
             message='Product theme updated successfully.',
+        )
+        return Response(success_response, status=status.HTTP_200_OK)
+
+class ProductThemeDeleteAPIView(views.APIView):
+    def delete(self, request, pk):
+
+        try:
+            product = Product.objects.get(id=pk)
+            product.theme = None
+            product.theme_index = None
+            product.save()
+        except:
+            pass
+            
+        success_response = ApiResponse(
+            success=True,
+            code=200,
+            data={},
+            message='Product theme removed successfully.',
         )
         return Response(success_response, status=status.HTTP_200_OK)

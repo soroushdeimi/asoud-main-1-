@@ -279,6 +279,13 @@ class Product(BaseModel):
         related_name='products',
         verbose_name=_('Theme')
     )
+    
+    theme_index = models.CharField(
+        max_length=2,
+        null=True,
+        blank=True,
+        verbose_name=_('Theme Index')
+    )
 
     class Meta:
         db_table = 'product'
