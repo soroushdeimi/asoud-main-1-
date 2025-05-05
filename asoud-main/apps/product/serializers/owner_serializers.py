@@ -50,7 +50,8 @@ class ProductCreateSerializer(serializers.ModelSerializer):
     keywords = KeywordField(
         many=True,
         queryset=ProductKeyword.objects.all(),
-        required=False
+        required=False,
+        write_only=True
     )
     type = serializers.ChoiceField(
         choices=Product.TYPE_CHOICES,
