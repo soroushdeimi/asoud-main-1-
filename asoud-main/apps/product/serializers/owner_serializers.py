@@ -65,10 +65,12 @@ class ProductCreateSerializer(serializers.ModelSerializer):
     ship_cost_pay_type = serializers.ChoiceField(
         choices=Product.SHIP_COST_PAY_TYPE_CHOICES,
     )
-    # images = serializers.ListField(
-    #     child=serializers.ImageField(), 
-    #     required=False
-    # )
+    uploaded_images = serializers.ListField(
+        child=serializers.ImageField(allow_empty_file=False), 
+        required=False,
+        write_only=True,
+        source='images'
+    )
 
     class Meta:
         model = Product
@@ -95,26 +97,34 @@ class ProductCreateSerializer(serializers.ModelSerializer):
             'sell_type',
             'ship_cost',
             'ship_cost_pay_type',
-            # 'images',
+            'uploaded_images',
         ]
 
     def create(self, validated_data):
         # remove images 
-        images = validated_data.pop('images', [])
+        images = self.context['request'].FILES.getlist('uploaded_images')
 
         keywords_data = validated_data.pop('keywords', [])
         product = Product.objects.create(**validated_data)
 
         product.keywords.set(keywords_data)
         
-        # for image in images:
-        #     _ = ProductImage.objects.create(
-        #         product=product,
-        #         image=image
-        #     )
+        for image in images:
+            _ = ProductImage.objects.create(
+                product=product,
+                image=image
+            )
 
         return product
 
+    def to_representation(self, instance):
+        representation = super().to_representation(instance)
+        # Add existing images to response
+        representation['images'] = [
+            {'id': img.id, 'image': img.image.url} 
+            for img in instance.images.all()  # Uses related_name
+        ]
+        return representation
 
 class ProductDiscountCreateSerializer(serializers.ModelSerializer):
     users = UserField(
