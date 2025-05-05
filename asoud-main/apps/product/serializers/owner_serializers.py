@@ -102,7 +102,7 @@ class ProductCreateSerializer(serializers.ModelSerializer):
 
     def create(self, validated_data):
         # remove images 
-        images = self.context['request'].FILES.getlist('uploaded_images')
+        images = validated_data.pop('uploaded_images', [])
 
         keywords_data = validated_data.pop('keywords', [])
         product = Product.objects.create(**validated_data)
