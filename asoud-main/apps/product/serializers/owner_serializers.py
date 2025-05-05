@@ -92,7 +92,7 @@ class ProductCreateSerializer(serializers.ModelSerializer):
 
     def create(self, validated_data):
         # remove images 
-        images = validated_data.pop('images', None)
+        images = validated_data.pop('images', [])
 
         keywords_data = validated_data.pop('keywords', [])
         product = Product.objects.create(**validated_data)
@@ -101,18 +101,24 @@ class ProductCreateSerializer(serializers.ModelSerializer):
             keyword, _ = ProductKeyword.objects.get_or_create(name=keyword_name.strip())
             product.keywords.add(keyword)
         
-        if images:
-            for image in images:
-                _ = ProductImage.objects.create(
-                    product=product,
-                    image=image
-                )
+        for image in images:
+            _ = ProductImage.objects.create(
+                product=product,
+                image=image
+            )
 
         return product
 
     def to_representation(self, instance):
         representation = super().to_representation(instance)
+        
         representation['keywords'] = [k.name for k in instance.keywords.all()]
+        
+        representation['images'] = [
+            {'id': img.id, 'url': img.image.url} 
+            for img in instance.images.all()  # Using the related_name
+        ]
+
         return representation
 
 class ProductDiscountCreateSerializer(serializers.ModelSerializer):
