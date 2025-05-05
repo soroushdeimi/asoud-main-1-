@@ -11,7 +11,6 @@ from apps.product.serializers.owner_serializers import (
     ProductListSerializer,
     ProductThemeListSerializer,
     ProductThemeCreateSerializer,
-    ProductThemeListSerializer,
 )
 from apps.product.models import Product, ProductTheme
 from apps.market.models import Market

@@ -154,6 +154,19 @@ class ProductListSerializer(serializers.ModelSerializer):
             'images',
         ]
 
+class ProductWithIndexListSerializer(serializers.ModelSerializer):
+    images = ProductImageSerializer(many=True)
+    class Meta:
+        model = Product
+        fields = [
+            'id',
+            'name',
+            'description',
+            'main_price',
+            'stock',
+            'images',
+            'theme_index',
+        ]
 
 class ProductDetailSerializer(serializers.ModelSerializer):
     required_product = ProductListSerializer(read_only=True)
@@ -196,7 +209,7 @@ class ProductThemeListSerializer(serializers.ModelSerializer):
 
     def get_products(self, obj):
         products = obj.products.all()
-        return ProductListSerializer(products, many=True, context=self.context).data
+        return ProductWithIndexListSerializer(products, many=True, context=self.context).data
 
 
 class ProductThemeCreateSerializer(serializers.ModelSerializer):
