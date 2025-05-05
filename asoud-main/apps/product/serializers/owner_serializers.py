@@ -10,17 +10,14 @@ from apps.product.models import (
     ProductImage,
 )
 
-class KeywordsField(serializers.ListField):
-    child = serializers.CharField()
+class KeywordField(serializers.RelatedField):
 
     def to_representation(self, value):
-        # 'value' is the RelatedManager (e.g., product.keywords)
-        # Return list of keyword names
-        return [keyword.name for keyword in value.all()]
+        return value.name
 
     def to_internal_value(self, data):
-        # Validate input as list of strings as usual
-        return super().to_internal_value(data)
+        keyword_obj, created = ProductKeyword.objects.get_or_create(name=data.strip())
+        return keyword_obj
     
 class UserField(serializers.RelatedField):
     def to_representation(self, value):
@@ -45,8 +42,10 @@ class ProductImageSerializer(serializers.ModelSerializer):
 
 
 class ProductCreateSerializer(serializers.ModelSerializer):
-    keywords = KeywordsField(
-        required=False,
+    keywords = KeywordField(
+        many=True,
+        queryset=ProductKeyword.objects.all(),
+        required=False
     )
     type = serializers.ChoiceField(
         choices=Product.TYPE_CHOICES,
@@ -66,10 +65,10 @@ class ProductCreateSerializer(serializers.ModelSerializer):
     ship_cost_pay_type = serializers.ChoiceField(
         choices=Product.SHIP_COST_PAY_TYPE_CHOICES,
     )
-    images = serializers.ListField(
-        child=serializers.ImageField(), 
-        required=False
-    )
+    # images = serializers.ListField(
+    #     child=serializers.ImageField(), 
+    #     required=False
+    # )
 
     class Meta:
         model = Product
@@ -96,7 +95,7 @@ class ProductCreateSerializer(serializers.ModelSerializer):
             'sell_type',
             'ship_cost',
             'ship_cost_pay_type',
-            'images',
+            # 'images',
         ]
 
     def create(self, validated_data):
@@ -106,15 +105,13 @@ class ProductCreateSerializer(serializers.ModelSerializer):
         keywords_data = validated_data.pop('keywords', [])
         product = Product.objects.create(**validated_data)
 
-        for keyword_name in keywords_data:
-            keyword, _ = ProductKeyword.objects.get_or_create(name=keyword_name.strip())
-            product.keywords.add(keyword)
+        product.keywords.set(keywords_data)
         
-        for image in images:
-            _ = ProductImage.objects.create(
-                product=product,
-                image=image
-            )
+        # for image in images:
+        #     _ = ProductImage.objects.create(
+        #         product=product,
+        #         image=image
+        #     )
 
         return product
 
