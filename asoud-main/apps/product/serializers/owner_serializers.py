@@ -68,8 +68,7 @@ class ProductCreateSerializer(serializers.ModelSerializer):
     uploaded_images = serializers.ListField(
         child=serializers.ImageField(allow_empty_file=False), 
         required=False,
-        write_only=True,
-        source='images'
+        write_only=True
     )
 
     class Meta:
