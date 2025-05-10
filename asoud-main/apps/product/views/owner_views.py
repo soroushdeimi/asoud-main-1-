@@ -249,8 +249,17 @@ class ProductThemeUpdateAPIView(views.APIView):
             product.theme = product_theme
             product.theme_index = index
             product.save()
-        except:
-            pass
+        except Exception as e:
+            fail_response = ApiResponse(
+                success=False,
+                code=400,
+                data={},
+                message=str(e),
+            )
+            return Response (
+                fail_response, 
+                status=status.HTTP_400_BAD_REQUEST
+            )
             
         success_response = ApiResponse(
             success=True,
