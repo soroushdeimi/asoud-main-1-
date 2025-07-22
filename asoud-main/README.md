@@ -64,14 +64,27 @@ To set up the Project, follow these steps:
     ```
 
 3. **Choose the appropriate Docker Compose file for your environment:**
-    * For development, use docker-compose.dev.yaml:
+    * For development, use `docker-compose.dev.yaml`:
         ```bash
         docker-compose -f docker-compose.dev.yaml build
         docker-compose -f docker-compose.dev.yaml up -d
         ```
 
-    * For production, use docker-compose.prod.yaml:
+    * For production, use `docker-compose.prod.yaml`:
         ```bash
         docker-compose -f docker-compose.prod.yaml build
+        docker-compose -f docker-compose.prod.yaml up -d
+        ```
+
+4. **Run the containers:** Depending on your environment start the stack
+   directly using the same compose file.
+
+    * Development mode:
+        ```bash
+        docker-compose -f docker-compose.dev.yaml up
+        ```
+
+    * Production mode (detached):
+        ```bash
         docker-compose -f docker-compose.prod.yaml up -d
         ```
