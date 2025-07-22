@@ -1,5 +1,7 @@
 from rest_framework import views, status
 from rest_framework.response import Response
+import logging
+logger = logging.getLogger(__name__)
 from utils.response import ApiResponse
 from apps.product.models import Product
 from apps.product.serializers.owner_serializers import (
@@ -205,7 +207,8 @@ class AffiliateProductThemeCreateAPIView(views.APIView):
     def post(self, request, pk):
         try:
             market = Market.objects.get(id=pk)
-        except:
+        except Market.DoesNotExist:
+            logger.exception("Market not found: %s", pk)
             return Response(
                 ApiResponse(
                     success=False,
@@ -239,7 +242,8 @@ class AffiliateProductThemeListAPIView(views.APIView):
     def get(self, request, pk):
         try:
             market = Market.objects.get(id=pk)
-        except:
+        except Market.DoesNotExist:
+            logger.exception("Market not found: %s", pk)
             return Response(
                 ApiResponse(
                     success=False,
@@ -269,7 +273,8 @@ class AffiliateProductThemeUpdateAPIView(views.APIView):
     def put(self, request, pk):
         try:
             product_theme = AffiliateProductTheme.objects.get(id=pk)
-        except:
+        except AffiliateProductTheme.DoesNotExist:
+            logger.exception("Affiliate Product Theme not found: %s", pk)
             return Response(
                 ApiResponse(
                     success=False,
@@ -295,8 +300,8 @@ class AffiliateProductThemeUpdateAPIView(views.APIView):
                 product = AffiliateProduct.objects.get(id=product_id)
                 product.theme = product_theme
                 product.save()
-            except:
-                pass
+            except AffiliateProduct.DoesNotExist:
+                logger.exception("Affiliate product not found: %s", product_id)
             
         success_response = ApiResponse(
             success=True,

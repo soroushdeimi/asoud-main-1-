@@ -1,5 +1,7 @@
 from rest_framework import views
 from rest_framework.response import Response
+import logging
+logger = logging.getLogger(__name__)
 
 from utils.response import ApiResponse
 
@@ -31,7 +33,8 @@ class ProvinceListAPIView(views.APIView):
     def get(self, request, pk, format=None):
         try:
             country_obj = Country.objects.get(id=pk)
-        except:
+        except Country.DoesNotExist:
+            logger.exception("Country not found: %s", pk)
             return Response(
                 ApiResponse(
                     success=False,
@@ -62,7 +65,8 @@ class CityListAPIView(views.APIView):
     def get(self, request, pk, format=None):
         try:
             province_obj = Province.objects.get(id=pk)
-        except:
+        except Province.DoesNotExist:
+            logger.exception("Province not found: %s", pk)
             return Response(
                 ApiResponse(
                     success=False,

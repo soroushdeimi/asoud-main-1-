@@ -1,5 +1,7 @@
 from rest_framework import views
 from rest_framework.response import Response
+import logging
+logger = logging.getLogger(__name__)
 
 from utils.response import ApiResponse
 
@@ -31,7 +33,8 @@ class CategoryListAPIView(views.APIView):
     def get(self, request, pk, format=None):
         try:
             group_obj = Group.objects.get(id=pk)
-        except:
+        except Group.DoesNotExist:
+            logger.exception("Group not found: %s", pk)
             return Response(
                 ApiResponse(
                     success=False,
@@ -62,7 +65,8 @@ class SubCategoryListAPIView(views.APIView):
     def get(self, request, pk, format=None):
         try:
             category_obj = Category.objects.get(id=pk)
-        except:
+        except Category.DoesNotExist:
+            logger.exception("Category not found: %s", pk)
             return Response(
                 ApiResponse(
                     success=False,

@@ -1,5 +1,7 @@
 from rest_framework import views, status
 from rest_framework.response import Response
+import logging
+logger = logging.getLogger(__name__)
 from apps.discount.models import Discount
 from utils.response import ApiResponse
 from apps.discount.serializers.owner import (
@@ -73,7 +75,8 @@ class DiscountDetailView(views.APIView):
         """
         try:
             discount = Discount.objects.get(id=pk)
-        except:
+        except Discount.DoesNotExist:
+            logger.exception("Discount not found: %s", pk)
             return Response(
                 ApiResponse(
                     success=False,
@@ -119,7 +122,8 @@ class DiscountDeleteView(views.APIView):
 
         try:
             discount = Discount.objects.get(id=pk)
-        except:
+        except Discount.DoesNotExist:
+            logger.exception("Discount not found: %s", pk)
             return Response(
                 ApiResponse(
                     success=False,
