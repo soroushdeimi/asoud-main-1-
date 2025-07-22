@@ -1,5 +1,7 @@
 from rest_framework import views, status
 from rest_framework.response import Response
+import logging
+logger = logging.getLogger(__name__)
 from django.utils.translation import gettext_lazy as _
 
 from utils.response import ApiResponse
@@ -43,7 +45,8 @@ class MarketReportAPIView(views.APIView):
     def post(self, request, pk):
         try:
             market = Market.objects.get(id=pk)
-        except:
+        except Market.DoesNotExist:
+            logger.exception("Market not found: %s", pk)
             return Response(
                 ApiResponse(
                     success=False,
@@ -93,7 +96,8 @@ class MarketBookmarkAPIView(views.APIView):
         user = self.request.user
         try:
             market = Market.objects.get(id=pk)
-        except:
+        except Market.DoesNotExist:
+            logger.exception("Market not found: %s", pk)
             return Response(
                 ApiResponse(
                     success=False,

@@ -1,5 +1,7 @@
 from rest_framework import views, status
 from rest_framework.response import Response
+import logging
+logger = logging.getLogger(__name__)
 from django.utils.translation import gettext_lazy as _
 
 from utils.response import ApiResponse
@@ -128,7 +130,8 @@ class ProductDetailAPIView(views.APIView):
     def get(self, request, pk):
         try:
             product = Product.objects.get(id=pk)
-        except:
+        except Product.DoesNotExist:
+            logger.exception("Product not found: %s", pk)
             return Response(
                 ApiResponse(
                     success=False,
@@ -156,7 +159,8 @@ class ProductThemeCreateAPIView(views.APIView):
     def post(self, request, pk):
         try:
             market = Market.objects.get(id=pk)
-        except:
+        except Market.DoesNotExist:
+            logger.exception("Market not found: %s", pk)
             return Response(
                 ApiResponse(
                     success=False,
@@ -191,7 +195,8 @@ class ProductThemeListAPIView(views.APIView):
     def get(self, request, pk):
         try:
             market = Market.objects.get(id=pk)
-        except:
+        except Market.DoesNotExist:
+            logger.exception("Market not found: %s", pk)
             return Response(
                 ApiResponse(
                     success=False,
@@ -222,7 +227,8 @@ class ProductThemeUpdateAPIView(views.APIView):
     def put(self, request, pk):
         try:
             product_theme = ProductTheme.objects.get(id=pk)
-        except:
+        except ProductTheme.DoesNotExist:
+            logger.exception("Product Theme not found: %s", pk)
             return Response(
                 ApiResponse(
                     success=False,
@@ -249,7 +255,8 @@ class ProductThemeUpdateAPIView(views.APIView):
             product.theme = product_theme
             product.theme_index = index
             product.save()
-        except Exception as e:
+        except Product.DoesNotExist as e:
+            logger.exception("Product not found: %s", product)
             fail_response = ApiResponse(
                 success=False,
                 code=400,
@@ -277,8 +284,8 @@ class ProductThemeDeleteAPIView(views.APIView):
             product.theme = None
             product.theme_index = None
             product.save()
-        except:
-            pass
+        except Product.DoesNotExist:
+            logger.exception("Product not found: %s", pk)
             
         success_response = ApiResponse(
             success=True,

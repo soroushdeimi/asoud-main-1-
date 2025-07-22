@@ -1,6 +1,8 @@
 from apps.sms.models import BulkSms, PatternSms, Line, Template
 from rest_framework import views, status
 from rest_framework.response import Response
+import logging
+logger = logging.getLogger(__name__)
 from utils.response import ApiResponse
 from apps.sms.serializers.admin import (
     LineSerializer,
@@ -224,7 +226,8 @@ class BulkSmsDetailView(views.APIView):
         
         try:
             sms = BulkSms.objects.get(id=pk)
-        except:
+        except BulkSms.DoesNotExist:
+            logger.exception("BulkSms not found: %s", pk)
             return Response(
                 ApiResponse(
                     success=False,
@@ -279,8 +282,9 @@ class BulkSmsUpdateView(views.APIView):
             )
         
         try:
-            sms = BulkSms.objects.get(pk)
-        except:
+            sms = BulkSms.objects.get(id=pk)
+        except BulkSms.DoesNotExist:
+            logger.exception("BulkSms not found: %s", pk)
             return Response(
                 ApiResponse(
                     success=False,
@@ -328,7 +332,8 @@ class PatternSmsDetailView(views.APIView):
         
         try:
             sms = PatternSms.objects.get(id=pk)
-        except:
+        except PatternSms.DoesNotExist:
+            logger.exception("PatternSms not found: %s", pk)
             return Response(
                 ApiResponse(
                     success=False,

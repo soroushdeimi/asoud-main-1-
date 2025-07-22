@@ -1,5 +1,8 @@
 from rest_framework import views
 from rest_framework.response import Response
+import logging
+
+logger = logging.getLogger(__name__)
 
 from utils.response import ApiResponse
 
@@ -11,7 +14,8 @@ class TermListAPIView(views.APIView):
     def get(self, request, format=None):
         try:
             term = Term.get_solo()
-        except:
+        except Exception as e:
+            logger.exception("Failed to retrieve Term: %s", e)
             return Response(
                 ApiResponse(
                     success=False,

@@ -1,5 +1,7 @@
 from rest_framework import views, status
 from rest_framework.response import Response
+import logging
+logger = logging.getLogger(__name__)
 from utils.response import ApiResponse
 from apps.reserve.models import (
     Service,
@@ -21,7 +23,8 @@ class ReserveTimeCreateView(views.APIView):
         try:
             print(serializer.validated_data['service'])
             service = Service.objects.get(id=serializer.validated_data['service'])
-        except Market.DoesNotExist:
+        except Service.DoesNotExist:
+            logger.exception("Service not found: %s", serializer.validated_data.get('service'))
             return Response(
                 ApiResponse(
                     success=False,
@@ -46,8 +49,10 @@ class ReserveTimeCreateView(views.APIView):
             reserve = ReserveTime.objects.get(service=service, day=serializer.validated_data['day'])
             serializer = ReserveTimeCreateSerializer(reserve, data=request.data, partial=True)
             serializer.is_valid(raise_exception=True)
-        except:
-            pass
+        except ReserveTime.DoesNotExist:
+            logger.exception(
+                "ReserveTime not found for service %s on %s", service.id, serializer.validated_data.get('day')
+            )
 
         serializer.save(service=service)
 
@@ -65,6 +70,7 @@ class ReserveTimeDetailView(views.APIView):
         try:
             reserve = ReserveTime.objects.get(id=pk)
         except ReserveTime.DoesNotExist:
+            logger.exception("ReserveTime not found: %s", pk)
             return Response(
                 ApiResponse(
                     success=False,
@@ -115,6 +121,7 @@ class ReserveTimeUpdateView(views.APIView):
         try:
             reserve = ReserveTime.objects.get(id=pk)
         except ReserveTime.DoesNotExist:
+            logger.exception("ReserveTime not found: %s", pk)
             return Response(
                 ApiResponse(
                     success=False,
@@ -156,6 +163,7 @@ class ReserveTimeDeleteView(views.APIView):
         try:
             reserve = ReserveTime.objects.get(id=pk)
         except ReserveTime.DoesNotExist:
+            logger.exception("ReserveTime not found: %s", pk)
             return Response(
                 ApiResponse(
                     success=False,
