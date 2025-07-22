@@ -367,4 +367,5 @@ class ProductDiscount(BaseModel):
         verbose_name_plural = _('Product discounts')
 
     def __str__(self):
-        return self.code
+        product_name = getattr(self.product, 'name', str(self.product))
+        return f"{product_name} - {self.percentage}%"
