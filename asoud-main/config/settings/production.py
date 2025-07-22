@@ -16,8 +16,10 @@ ALLOWED_HOSTS = [
     'asoud.ir',
 ]
 
-# Use a more secure secret key in production
-SECRET_KEY = os.environ.get('DJANGO_SECRET_KEY')
+# Use a more secure secret key in production. This value should always
+# be provided via the ``SECRET_KEY`` environment variable. The fallback
+# from ``base.py`` is intended only for development.
+SECRET_KEY = os.getenv("SECRET_KEY", SECRET_KEY)
 
 # TODO: Add below lines after domain is submitted
 # SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
