@@ -48,7 +48,7 @@ class ProductAdmin(BaseAdmin):
         'name',
         'description',
         'technical_detail',
-        'sub_category',
+        'product_sub_category',
         'keywords',
         'stock',
         'main_price',

@@ -49,6 +49,28 @@ class ProductTheme(BaseModel):
         return self.name
 
 
+class ProductSubCategory(BaseModel):
+    market = models.ForeignKey(
+        Market,
+        on_delete=models.CASCADE,
+        verbose_name=_('Market'),
+    )
+    sub_category = models.ForeignKey(
+        SubCategory,
+        on_delete=models.CASCADE,
+        verbose_name=_('Sub Category'),
+    )
+
+    class Meta:
+        db_table = 'product_sub_category'
+        verbose_name = _('Product sub category')
+        verbose_name_plural = _('Product sub categories')
+        unique_together = ('market', 'sub_category')
+
+    def __str__(self):
+        return f"{self.market} - {self.sub_category}"
+
+
 class Product(BaseModel):
     GOOD = "good"
     SERVICE = "service"
@@ -147,10 +169,10 @@ class Product(BaseModel):
         verbose_name=_('Technical detail'),
     )
 
-    sub_category = models.ForeignKey(
-        SubCategory,
+    product_sub_category = models.ForeignKey(
+        ProductSubCategory,
         on_delete=models.CASCADE,
-        verbose_name=_('Category'),
+        verbose_name=_('Product sub category'),
     )
 
     keywords = models.ManyToManyField(
