@@ -571,6 +571,30 @@ msgstr "تخفیف محصول"
 msgid "Product discounts"
 msgstr "تخفیفات محصول"
 
+#: apps/product/models.py:333
+msgid "Product category group"
+msgstr "گروه دسته بندی محصول"
+
+#: apps/product/models.py:334
+msgid "Product category groups"
+msgstr "گروه های دسته بندی محصول"
+
+#: apps/product/models.py:352
+msgid "Product category"
+msgstr "دسته بندی محصول"
+
+#: apps/product/models.py:353
+msgid "Product categories"
+msgstr "دسته بندی های محصول"
+
+#: apps/product/models.py:371
+msgid "Product sub category"
+msgstr "زیر دسته بندی محصول"
+
+#: apps/product/models.py:372
+msgid "Product sub categories"
+msgstr "زیر دسته بندی های محصول"
+
 #: apps/region/models.py:15 apps/region/models.py:26
 msgid "Country"
 msgstr "کشور"

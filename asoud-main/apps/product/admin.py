@@ -6,6 +6,9 @@ from .models import (
     ProductKeyword,
     ProductDiscount,
     ProductTheme,
+    ProductCategoryGroup,
+    ProductCategory,
+    ProductSubCategory,
 )
 
 # Register your models here.
@@ -102,3 +105,65 @@ class ProductThemeAdmin(BaseAdmin):
 
 
 admin.site.register(ProductTheme, ProductThemeAdmin)
+
+
+class ProductSubCategoryTabularInline(BaseTabularInline):
+    model = ProductSubCategory
+
+    fields = (
+        'title',
+    ) + BaseTabularInline.fields
+
+    readonly_fields = BaseTabularInline.readonly_fields
+
+
+class ProductCategoryAdmin(BaseAdmin):
+    inlines = [
+        ProductSubCategoryTabularInline,
+    ]
+
+    list_display = [
+        'title',
+        'group',
+    ]
+
+    fields = (
+        'group',
+        'title',
+    ) + BaseAdmin.fields
+
+    readonly_fields = BaseAdmin.readonly_fields
+
+
+admin.site.register(ProductCategory, ProductCategoryAdmin)
+
+
+class ProductCategoryTabularInline(BaseTabularInline):
+    model = ProductCategory
+
+    fields = (
+        'title',
+    ) + BaseTabularInline.fields
+
+    readonly_fields = BaseTabularInline.readonly_fields
+
+
+class ProductCategoryGroupAdmin(BaseAdmin):
+    inlines = [
+        ProductCategoryTabularInline,
+    ]
+
+    list_display = [
+        'title',
+        'sub_category',
+    ]
+
+    fields = (
+        'sub_category',
+        'title',
+    ) + BaseAdmin.fields
+
+    readonly_fields = BaseAdmin.readonly_fields
+
+
+admin.site.register(ProductCategoryGroup, ProductCategoryGroupAdmin)
