@@ -96,7 +96,7 @@ class UserProfile(BaseModel):
         verbose_name_plural = _('User profiles')
 
     def __str__(self):
-        return self.mobile_number
+        return self.user.mobile_number
 
 
 class UserDocument(BaseModel):
@@ -118,7 +118,7 @@ class UserDocument(BaseModel):
         verbose_name_plural = _('User documents')
 
     def __str__(self):
-        return self.user
+        return str(self.user)
 
 
 class UserColleague(BaseModel):
@@ -139,4 +139,4 @@ class UserColleague(BaseModel):
         verbose_name_plural = _('User colleagues')
 
     def __str__(self):
-        return self.user
+        return str(self.user)
