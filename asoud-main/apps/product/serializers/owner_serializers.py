@@ -8,6 +8,7 @@ from apps.product.models import (
     ProductTheme,
     ProductKeyword,
     ProductImage,
+    ProductSubCategory,
 )
 
 class KeywordField(serializers.RelatedField):
@@ -79,7 +80,7 @@ class ProductCreateSerializer(serializers.ModelSerializer):
             'name',
             'description',
             'technical_detail',
-            'sub_category',
+            'product_sub_category',
             'keywords',
             'stock',
             'main_price',
