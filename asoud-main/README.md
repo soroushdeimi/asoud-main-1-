@@ -34,10 +34,10 @@
 ```
 
 ## Configuration
-Before running the project, make sure to set these environment variables either in a `.env` file (for local development) or through your server's environment configuration. Properly configuring these variables will ensure the smooth functioning of your project.
+Before running the project, make sure to set these environment variables either in a `.env` file (for local development) or through your server's environment configuration. You can use the provided `.env.example` file as a starting point. Properly configuring these variables will ensure the smooth functioning of your project.
 
-#### Django Project Configuration
-- **SECRET_KEY**: The Django project's secret key used for cryptographic signing. Keep this key confidential and do not share it publicly.
+-#### Django Project Configuration
+- **SECRET_KEY**: The Django project's secret key used for cryptographic signing. It is read from the `SECRET_KEY` environment variable and falls back to a safe default for local development. Keep this key confidential and do not share it publicly.
 - **LOGLEVEL**: The logging level for the Django project. It determines the severity of logs to be recorded (e.g., DEBUG, INFO, WARNING, ERROR, etc.).
 
 #### Database Variables
