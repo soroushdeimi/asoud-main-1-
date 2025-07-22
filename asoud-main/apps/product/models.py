@@ -7,6 +7,66 @@ from apps.market.models import Market
 from apps.comment.models import Comment
 from apps.category.models import SubCategory
 
+
+class ProductCategoryGroup(BaseModel):
+    sub_category = models.ForeignKey(
+        SubCategory,
+        on_delete=models.CASCADE,
+        verbose_name=_('Sub Category'),
+    )
+    title = models.CharField(
+        max_length=255,
+        verbose_name=_('Title'),
+    )
+
+    class Meta:
+        db_table = 'product_category_group'
+        verbose_name = _('Product category group')
+        verbose_name_plural = _('Product category groups')
+
+    def __str__(self):
+        return self.title
+
+
+class ProductCategory(BaseModel):
+    group = models.ForeignKey(
+        ProductCategoryGroup,
+        on_delete=models.CASCADE,
+        verbose_name=_('Group'),
+    )
+    title = models.CharField(
+        max_length=255,
+        verbose_name=_('Title'),
+    )
+
+    class Meta:
+        db_table = 'product_category'
+        verbose_name = _('Product category')
+        verbose_name_plural = _('Product categories')
+
+    def __str__(self):
+        return self.title
+
+
+class ProductSubCategory(BaseModel):
+    category = models.ForeignKey(
+        ProductCategory,
+        on_delete=models.CASCADE,
+        verbose_name=_('Category'),
+    )
+    title = models.CharField(
+        max_length=255,
+        verbose_name=_('Title'),
+    )
+
+    class Meta:
+        db_table = 'product_sub_category'
+        verbose_name = _('Product sub category')
+        verbose_name_plural = _('Product sub categories')
+
+    def __str__(self):
+        return self.title
+
 # Create your models here.
 
 

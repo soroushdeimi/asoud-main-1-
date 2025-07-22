@@ -54,6 +54,10 @@ urlpatterns = [
         include('apps.product.urls.owner_urls'),
     ),
     path(
+        'api/v1/product/category/',
+        include('apps.product.urls.category_urls'),
+    ),
+    path(
         'api/v1/user/chat/',
         include('apps.chat.urls.user_urls'),
     ),

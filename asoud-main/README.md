@@ -75,3 +75,13 @@ To set up the Project, follow these steps:
         docker-compose -f docker-compose.prod.yaml build
         docker-compose -f docker-compose.prod.yaml up -d
         ```
+
+## Product Category API Endpoints
+
+These endpoints provide hierarchical product categories tied to a job subcategory.
+
+| Method | Endpoint | Description |
+| ------ | -------- | ----------- |
+| GET | `/api/v1/product/category/group/list/<sub_category_id>/` | List product category groups for a subcategory |
+| GET | `/api/v1/product/category/list/<group_id>/` | List product categories within a group |
+| GET | `/api/v1/product/category/sub/list/<category_id>/` | List product subcategories within a category |
